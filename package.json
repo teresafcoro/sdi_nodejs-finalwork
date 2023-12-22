@@ -1,0 +1,8 @@
+{
+  "name": "My Wallapop",
+  "description": "My Wallapop es una aplicación web basada en la compraventa de artículos",
+  "version": "1.0.0",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
