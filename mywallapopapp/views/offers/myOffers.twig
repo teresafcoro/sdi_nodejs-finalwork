@@ -1,0 +1,47 @@
+{% extends "layout.twig" %}
+{% block main_container %}
+<h2>Mis ofertas</h2>
+<div class="container">
+    <div class="row">
+        {% if offers.length > 0 %}
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Detalle</th>
+                    <th>Fecha de publicación</th>
+                    <th>Precio</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for offer in offers %}
+                    <tr>
+                        <td>{{ offer.title }}</td>
+                        <td>{{ offer.detail }}</td>
+                        <td>{{ offer.publicationDate }}</td>
+                        <td>{{ offer.price }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No dispones de ofertas</p>
+        {% endif %}
+    </div>
+    {% if pages.length > 4 %}
+        <div class="row text-center">
+            <ul class="pagination">
+                {% for page in pages %}
+                    <li class="page-item" id="pi-{{ page }}">
+                        <a class="page-link"
+                           href="/offers/myoffers/?page={{ page }}">{{ page }}</a>
+                    </li>
+                {% endfor %}
+                <script>
+                    $("#pi-" + "{{ currentPage }}").addClass("active");
+                </script>
+            </ul>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

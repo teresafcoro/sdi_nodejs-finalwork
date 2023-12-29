@@ -17,7 +17,7 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <img src="/images/logo.png" alt="logo"/>
+    <h1>My Wallapop</h1>
     <button class="navbar-toggler" type="button" data-toggle="collapse"
             data-target="#navbarTogglerDemo01"
             aria-controls="navbarTogglerDemo01" aria-expanded="false"
@@ -25,13 +25,49 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarApp">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            {% if sessionUser and sessionUser != "admin@email.com" %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="gestionOfertasMenu" role="button"
+                       data-toggle="dropdown" aria-expanded="false"> Gestión de ofertas
+                    </a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="navbarDropdown"
+                        id="gestionOfertasDropdown">
+                        <a class="dropdown-item" id="addOfferMenu" href="/offer/add">Añadir oferta</a>
+                        <a class="dropdown-item" href="/user/offers" id="listOfferMenu">Ver ofertas propias</a>
+                        <a class="dropdown-item" href="/offers/all" id="listAllOffersMenu">
+                            Ver ofertas para comprar </a>
+                        <a class="dropdown-item" href="/offer/boughtList" id="listBoughtOffers">
+                            Ver ofertas compradas</a>
+                    </ul>
+                </li>
+            {% elseif sessionUser and sessionUser == "admin@email.com" %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="gestionUsuariosMenu" role="button"
+                       data-toggle="dropdown" aria-expanded="false"> Gestión de usuarios
+                    </a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="navbarDropdown"
+                        id="gestionUsuariosDropdown">
+                        <li><a class="dropdown-item" id="listAllUsers"
+                               href="/users">Listado de usuarios</a>
+                        </li>
+                    </ul>
+                </li>
+            {% endif %}
+        </ul>
         <ul class="nav navbar-nav navbar-right">
-            <li><a href="/users/signup" class="nav-link">
-                    <span class="glyphicon glyphicon-user"></span>Regístrate</a>
-            </li>
-            <li><a href="/users/login" class="nav-link">
-                    <span class="glyphicon glyphicon-user"></span>Identifícate</a>
-            </li>
+            {% if not sessionUser %}
+                <li><a href="/users/signup" class="nav-link">
+                        <span class="glyphicon glyphicon-user"></span>Registrarse</a>
+                </li>
+                <li><a href="/users/login" class="nav-link">
+                        <span class="glyphicon glyphicon-user"></span>Iniciar sesión</a>
+                </li>
+            {% else %}
+                <li><a href="/users/logout" class="nav-link">
+                        <span class="glyphicon glyphicon-user"></span>Cerrar Sesión</a>
+                </li>
+            {% endif %}
         </ul>
     </div>
 </nav>

@@ -24,17 +24,21 @@ app.set('crypto', crypto);
 // Acceso MongoDB
 const {MongoClient} = require("mongodb");
 // const url = 'mongodb+srv://admin:wqHXfPJz3vfbTsZb@mywallapopapp.jta7npq.mongodb.net/?retryWrites=true&w=majority';
-const localUrl = 'mongodb://localhost:27017';
-app.set('connectionStrings', localUrl);
+const url = 'mongodb://localhost:27017'; // local
+app.set('connectionStrings', url);
 
 // User Session Router
 const userSessionRouter = require('./routes/userSessionRouter');
-app.use("/shop/", userSessionRouter)
+app.use("/offers/add", userSessionRouter);
 
 // Rutas
 const usersRepository = require("./repositories/usersRepository.js");
 usersRepository.init(app, MongoClient);
 require("./routes/users.js")(app, usersRepository);
+
+const offersRepository = require("./repositories/offersRepository.js");
+offersRepository.init(app, MongoClient);
+require("./routes/offers.js")(app, offersRepository);
 
 let indexRouter = require('./routes/index');
 

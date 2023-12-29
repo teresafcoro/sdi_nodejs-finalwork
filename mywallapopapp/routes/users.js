@@ -1,7 +1,20 @@
 module.exports = function (app, usersRepository) {
     app.get('/users', function (req, res) {
-        usersRepository.getUsers().then(users => {
-            res.render('users.twig', {users: users});
+        let page = parseInt(req.query.page);
+        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0")
+            page = 1;
+        let filter = {kind: 'Usuario Estándar'};
+        usersRepository.getUsersPg(filter, {}, page).then(result => {
+            let lastPage = result.total / 4;
+            if (result.total % 4 > 0)
+                lastPage = lastPage + 1;
+            let pages = [];
+            for (let i = page - 2; i <= page + 2; i++) {
+                if (i > 0 && i <= lastPage)
+                    pages.push(i);
+            }
+            let response = {users: result.users, pages: pages, currentPage: page};
+            res.render('users/list.twig', response);
         }).catch(() => {
             res.redirect("/users" +
                 "?message=No se pudieron listar los usuarios" + "&messageType=alert-danger");
@@ -11,27 +24,31 @@ module.exports = function (app, usersRepository) {
         res.render('signup.twig');
     });
     app.post('/users/signup', function (req, res) {
-        if (req.body.password !== req.body.repitePassword)
+        const parsedDate = new Date(req.body.fecha);
+        if (parsedDate.toString() === 'Invalid Date')
+            res.redirect("/users/signup" + "?message=Fecha inválida" + "&messageType=alert-danger");
+        else if (req.body.password !== req.body.repitePassword)
             res.redirect("/users/signup" +
                 "?message=Las contraseñas no coinciden" + "&messageType=alert-danger");
         else {
             let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
                 .update(req.body.password).digest('hex');
             const {email, nombre, apellidos, fecha} = req.body;
+            const cuenta = 100; // cuenta de dinero con 100€ iniciales
             let user = {
                 email,
                 nombre,
                 apellidos,
                 fecha,
+                cuenta,
                 kind: "Usuario Estándar",
                 password: securePassword
             };
             usersRepository.findUser({email: user.email}, {}).then(dbUser => {
                 if (dbUser === null) {
-                    usersRepository.insertUser(user).then(userId => {
-                        res.redirect("/users/offers" +
-                            "?message=Usuario registrado correctamente: " + userId +
-                            "&messageType=alert-info");
+                    usersRepository.insertUser(user).then(user => {
+                        req.session.user = user.email;
+                        res.render('offers/myOffers.twig', {sessionUser: req.session.user});
                     });
                 } else {
                     res.redirect("/users/signup" +
@@ -62,7 +79,10 @@ module.exports = function (app, usersRepository) {
                     + "?message=Email o contraseña incorrecta" + "&messageType=alert-danger");
             } else {
                 req.session.user = user.email;
-                res.redirect('/shop');
+                if (user.kind === 'Administrador')
+                    res.render('users/list.twig', {sessionUser: req.session.user});
+                else
+                    res.render('offers/myOffers.twig', {sessionUser: req.session.user});
             }
         }).catch(() => {
             req.session.user = null;
@@ -72,13 +92,13 @@ module.exports = function (app, usersRepository) {
     });
     app.get('/users/logout', function (req, res) {
         req.session.user = null;
-        res.redirect("/users/login"
-            + "?message=El usuario se ha desconectado correctamente" + "&messageType=alert-info");
+        res.render('login.twig', {sessionUser: req.session.user});
     });
-    app.get('/users/delete/:id', function (req, res) {
-        // TO-DO: Obtener los usuarios seleccionados para el borrado!!!!!!!!!!!!!!!!
-        let filter = {};
-        usersRepository.deleteUser(filter, {}).then(result => {
+    app.get('/users/delete', function (req, res) {
+        let usersEmails = [];
+        usersEmails = usersEmails.concat(req.body.userEmails);
+        let filter = {email: {$in: usersEmails}};
+        usersRepository.deleteUsers(filter, {}).then(result => {
             if (result === null || result.deletedCount === 0) {
                 res.redirect("/users"
                     + "?message=No se ha podido realizar el borrado" + "&messageType=alert-danger");
