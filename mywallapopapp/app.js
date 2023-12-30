@@ -30,6 +30,12 @@ app.set('connectionStrings', url);
 // User Session Router
 const userSessionRouter = require('./routes/userSessionRouter');
 app.use("/offers/add", userSessionRouter);
+app.use("/shop/", userSessionRouter);
+
+// User Seller Router
+const userSellerRouter = require('./routes/userSellerRouter');
+app.use("/offers/edit", userSellerRouter);
+app.use("/offers/delete", userSellerRouter);
 
 // Rutas
 const usersRepository = require("./repositories/usersRepository.js");
