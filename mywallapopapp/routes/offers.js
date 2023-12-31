@@ -1,5 +1,5 @@
 module.exports = function (app, offersRepository) {
-    app.get('/shop', function (req, res) {
+    app.get('/offers/shop', function (req, res) {
         let filter = {};
         let options = {sort: {title: 1}};
         if (req.query.search != null && typeof (req.query.search) != "undefined" && req.query.search !== "") {
@@ -23,9 +23,9 @@ module.exports = function (app, offersRepository) {
                     pages.push(i);
             }
             let response = {offers: result.offers, pages: pages, currentPage: page};
-            res.render("shop.twig", response);
+            res.render("offers/shop.twig", response);
         }).catch(() => {
-            res.redirect("/shop" +
+            res.redirect("/offers/shop" +
                 "?message=Se produjo un error al listar las ofertas" + "&messageType=alert-danger");
         });
     });
@@ -35,12 +35,20 @@ module.exports = function (app, offersRepository) {
     app.post('/offers/add', function (req, res) {
         if (req.body.title && req.body.title !== ''
             && req.body.detail && req.body.detail !== '' && req.body.price > 0) {
-            let {title, detail, price} = req.body;
+            let {title, detail, price, featured} = req.body;
+            if (featured && req.session.user.wallet < 20)
+                res.redirect("/offers/add" +
+                    "?message=Dinero insuficiente para destacar la oferta (precio: 20€)"
+                    + "&messageType=alert-danger");
+            else if (featured && req.session.user.wallet >= 20)
+                req.session.user.wallet -= 20;
             const offer = {
                 title,
                 detail,
                 publicationDate: new Date(),
                 price,
+                featured: featured,
+                isSold: false,
                 seller: req.session.user
             };
             offersRepository.insertOffer(offer).then(offer => {
@@ -77,27 +85,52 @@ module.exports = function (app, offersRepository) {
     });
     app.get('/offers/delete/:id', function (req, res) {
         let filter = {_id: ObjectId(req.params.id)};
-        offersRepository.deleteOffer(filter, {}).then(result => {
-            if (result === null || result.deletedCount === 0)
-                res.redirect("/offers/myoffers" +
-                    "?message=No se pudo eliminar la oferta" + "&messageType=alert-danger");
-            else
-                res.redirect("/offers/myoffers");
-        }).catch(() => {
-            res.redirect("/offers/myoffers" +
-                "?message=No se pudo eliminar la oferta" + "&messageType=alert-danger");
+        offersRepository.findOffer(filter, {}).then(offer => {
+            if (offer && offer.isSold)
+                res.redirect("/offers/myOffers" +
+                    "?message=Oferta vendida, no se puede eliminar" + "&messageType=alert-danger");
+            else {
+                offersRepository.deleteOffer(filter, {}).then(result => {
+                    if (result === null || result.deletedCount === 0)
+                        res.redirect("/offers/myoffers" +
+                            "?message=No se pudo eliminar la oferta" + "&messageType=alert-danger");
+                    else
+                        res.redirect("/offers/myoffers");
+                }).catch(() => {
+                    res.redirect("/offers/myoffers" +
+                        "?message=No se pudo eliminar la oferta" + "&messageType=alert-danger");
+                });
+            }
         });
     });
     app.get('offers/buy/:id', function (req, res) {
         let offerId = ObjectId(req.params.id);
-        let shop = {user: req.session.user, offerId: offerId};
-        offersRepository.buyOffer(shop, function (shopId) {
-            if (shopId == null) {
-                res.redirect("/shop" +
-                    "?message=Error al realizar la compra" + "&messageType=alert-danger");
-            } else {
-                res.redirect("/purchases");
+        let user = req.session.user;
+        let filter = {_id: offerId};
+        offersRepository.findOffer(filter, {}).then(offer => {
+            if (offer.seller !== user && offer.price <= user.wallet) {
+                let shop = {user: user, offerId: offerId};
+                offersRepository.buyOffer(shop, function (shopId) {
+                    if (shopId !== null) {
+                        res.redirect("/offers/shop" +
+                            "?message=Error al realizar la compra" + "&messageType=alert-danger");
+                    } else {
+                        user.wallet -= offer.price; // TO-DO?
+                        offer.isSold = true;
+                        offersRepository.updateOffer(offer, filter, options).then(result => {
+                            if (result !== null)
+                                res.redirect("/offers/purchases");
+                            else
+                                res.redirect("/offers/shop" +
+                                    "?message=Error al actualizar la oferta" + "&messageType=alert-danger");
+                        });
+
+                    }
+                });
             }
+            else
+                res.redirect("/offers/shop" +
+                    "?message=Es su oferta o saldo insuficiente" + "&messageType=alert-danger");
         });
     });
     app.get('/offers/purchases', function (req, res) {
@@ -121,16 +154,36 @@ module.exports = function (app, offersRepository) {
             let filter = {"_id": {$in: purchases}};
             let options = {sort: {title: 1}};
             offersRepository.getOffers(filter, options).then(offers => {
-                res.render("purchase.twig", {offers: offers});
-            }).catch(error => {
-                res.redirect("/shop" +
+                res.render("offers/purchase.twig", {offers: offers});
+            }).catch(() => {
+                res.redirect("/offers/shop" +
                     "?message=Se ha producido un error al listar tus ofertas compradas"
                     + "&messageType=alert-danger");
             });
-        }).catch(error => {
-            res.redirect("/shop" +
+        }).catch(() => {
+            res.redirect("/offers/shop" +
                 "?message=Se ha producido un error al listar tus ofertas compradas"
                 + "&messageType=alert-danger");
+        });
+    });
+    app.get('/offers/featured/:id', function (req, res) {
+        let offerId = ObjectId(req.params.id);
+        let filter = {_id: offerId};
+        let user = req.session.user;
+        offersRepository.findOffer(filter, {}).then(offer => {
+            if (user.wallet >= 20) { // coste de destacar una oferta
+                user.wallet -= 20;
+                offer.featured = true;
+                offersRepository.updateOffer(offer, filter, options).then(result => {
+                    if (result !== null)
+                        res.redirect("/offers/myoffers");
+                    else
+                        res.redirect("/offers/myoffers" +
+                            "?message=Error al destacar la oferta" + "&messageType=alert-danger");
+                });
+            } else
+                res.redirect("/offers/myoffers" +
+                    "?message=Saldo insuficiente para destacar la oferta" + "&messageType=alert-danger");
         });
     });
 }

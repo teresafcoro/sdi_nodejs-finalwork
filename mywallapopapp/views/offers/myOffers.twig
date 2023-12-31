@@ -1,4 +1,4 @@
-{% extends "layout.twig" %}
+{% extends 'layout.twig' %}
 {% block main_container %}
 <h2>Mis ofertas</h2>
 <div class="container">
@@ -12,6 +12,7 @@
                     <th>Fecha de publicación</th>
                     <th>Precio</th>
                     <th></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -23,6 +24,14 @@
                         <td>{{ offer.price }}</td>
                         <td><a href="/offers/delete/{{ offer._id }}"
                                class="btn btn-danger">Eliminar</a></td>
+                        <td>
+                            {% if offer.featured %}
+                                <p>Destacada</p>
+                            {% else %}
+                                <a href="/offers/featured/{{ offer._id }}" id="featured"
+                                   class="btn btn-primary">Destacar</a>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>

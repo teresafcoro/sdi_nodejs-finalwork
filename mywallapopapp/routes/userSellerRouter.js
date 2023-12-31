@@ -11,10 +11,11 @@ userSellerRouter.use(function (req, res, next) {
         if (req.session.user && offer.seller === req.session.user) {
             next();
         } else {
-            res.redirect("/shop");
+            res.redirect("/offers/shop");
         }
     }).catch(error => {
-        res.redirect("/shop");
+        res.redirect("/offers/shop" +
+            "?message=Error: " + error + "&messageType=alert-danger");
     });
 });
-module.exports = userAuthorRouter;
+module.exports = userSellerRouter;

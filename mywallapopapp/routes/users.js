@@ -21,26 +21,26 @@ module.exports = function (app, usersRepository) {
         });
     });
     app.get('/users/signup', function (req, res) {
-        res.render('signup.twig');
+        res.render('users/signup.twig');
     });
     app.post('/users/signup', function (req, res) {
-        const parsedDate = new Date(req.body.fecha);
+        const parsedDate = new Date(req.body.dateOfBirth);
         if (parsedDate.toString() === 'Invalid Date')
             res.redirect("/users/signup" + "?message=Fecha inválida" + "&messageType=alert-danger");
-        else if (req.body.password !== req.body.repitePassword)
+        else if (req.body.password !== req.body.verifyPassword)
             res.redirect("/users/signup" +
                 "?message=Las contraseñas no coinciden" + "&messageType=alert-danger");
         else {
             let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
                 .update(req.body.password).digest('hex');
-            const {email, nombre, apellidos, fecha} = req.body;
-            const cuenta = 100; // cuenta de dinero con 100€ iniciales
+            const {email, name, surname, dateOfBirth} = req.body;
+            const wallet = 100; // cuenta de dinero con 100€ iniciales
             let user = {
                 email,
-                nombre,
-                apellidos,
-                fecha,
-                cuenta,
+                name,
+                surname,
+                dateOfBirth,
+                wallet,
                 kind: "Usuario Estándar",
                 password: securePassword
             };
@@ -63,7 +63,7 @@ module.exports = function (app, usersRepository) {
         }
     });
     app.get('/users/login', function (req, res) {
-        res.render("login.twig");
+        res.render("users/login.twig");
     });
     app.post('/users/login', function (req, res) {
         let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
@@ -92,7 +92,7 @@ module.exports = function (app, usersRepository) {
     });
     app.get('/users/logout', function (req, res) {
         req.session.user = null;
-        res.render('login.twig', {sessionUser: req.session.user});
+        res.render('users/login.twig', {sessionUser: req.session.user});
     });
     app.get('/users/delete', function (req, res) {
         let usersEmails = [];

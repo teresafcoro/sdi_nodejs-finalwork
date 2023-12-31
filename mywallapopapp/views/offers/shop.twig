@@ -1,10 +1,11 @@
-{% extends "layout.twig" %}
+{% extends 'layout.twig' %}
 {% block main_container %}
     <h2>Ofertas</h2>
+    <p>{{ usser }}</p>
     <div class="container">
         <div class="row">
             <div id="custom-search-input ">
-                <form method="get" action="/shop">
+                <form method="get" action="/offers/shop">
                     <div class="input-group col-xs-8 col-sm-6 col-md-4 col-lg-5 pull-right">
                         <label class="control-label col-sm-2" for="search">Buscar:</label>
                         <input id="search" type="text" class="search-query form-control"
@@ -18,6 +19,44 @@
                 </form>
             </div>
         </div>
+        <h3>Ofertas destacadas</h3>
+        <div class="row-featured">
+            {% if offers.length > 0 %}
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Detalle</th>
+                        <th>Fecha de publicación</th>
+                        <th>Precio</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for offer in offers %}
+                        {% if offer.featured %}
+                            <tr>
+                                <td>{{ offer.title }}</td>
+                                <td>{{ offer.detail }}</td>
+                                <td>{{ offer.publicationDate }}</td>
+                                <td>{{ offer.price }}</td>
+                                <td>{% if offer.isBought %}
+                                        <p>Vendido</p>
+                                    {% else %}
+                                        <a href="/offers/buy/{{ offer._id }}"
+                                           class="btn btn-primary">Comprar</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No tiene ofertas destacadas</p>
+            {% endif %}
+        </div>
+        <h3>Ofertas</h3>
         <div class="row">
             {% if offers.length > 0 %}
                 <table class="table table-striped">
@@ -58,7 +97,7 @@
                     {% for page in pages %}
                         <li class="page-item" id="pi-{{ page }}">
                             <a class="page-link"
-                               href="/shop/?page={{ page }}">{{ page }}</a>
+                               href="/offers/shop/?page={{ page }}">{{ page }}</a>
                         </li>
                     {% endfor %}
                     <script>

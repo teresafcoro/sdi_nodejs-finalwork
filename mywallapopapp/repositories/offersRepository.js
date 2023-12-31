@@ -99,5 +99,15 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
+    }, updateOffer: async function (offer, filter, options) {
+        try {
+            const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
+            const database = client.db("myWallapop");
+            const collectionName = 'offers';
+            const offersCollection = database.collection(collectionName);
+            return await offersCollection.updateOne(filter, {$set: offer}, options);
+        } catch (error) {
+            throw(error);
+        }
     }
 };

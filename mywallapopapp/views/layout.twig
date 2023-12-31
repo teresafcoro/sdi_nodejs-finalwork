@@ -27,29 +27,28 @@
     <div class="collapse navbar-collapse" id="navbarApp">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             {% if sessionUser and sessionUser != "admin@email.com" %}
+                <li>{{ sessionUser }} wallet: </li><!-- TO-DO: Valor del wallet del usuario -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="gestionOfertasMenu" role="button"
-                       data-toggle="dropdown" aria-expanded="false"> Gestión de ofertas
-                    </a>
+                       data-toggle="dropdown" aria-expanded="false"> Gestión de ofertas</a>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="navbarDropdown"
                         id="gestionOfertasDropdown">
-                        <a class="dropdown-item" id="addOfferMenu" href="/offer/add">Añadir oferta</a>
-                        <a class="dropdown-item" href="/user/offers" id="listOfferMenu">Ver ofertas propias</a>
-                        <a class="dropdown-item" href="/offers/all" id="listAllOffersMenu">
+                        <a class="dropdown-item" id="addOffer" href="/offers/add">Añadir oferta</a>
+                        <a class="dropdown-item" href="/offers/myoffers" id="listMyOffers">
+                            Ver ofertas propias</a>
+                        <a class="dropdown-item" href="/offers/shop" id="listOffers">
                             Ver ofertas para comprar </a>
-                        <a class="dropdown-item" href="/offer/boughtList" id="listBoughtOffers">
+                        <a class="dropdown-item" href="/offers/purchases" id="listPurchases">
                             Ver ofertas compradas</a>
                     </ul>
                 </li>
             {% elseif sessionUser and sessionUser == "admin@email.com" %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="gestionUsuariosMenu" role="button"
-                       data-toggle="dropdown" aria-expanded="false"> Gestión de usuarios
-                    </a>
+                       data-toggle="dropdown" aria-expanded="false"> Gestión de usuarios</a>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="navbarDropdown"
                         id="gestionUsuariosDropdown">
-                        <li><a class="dropdown-item" id="listAllUsers"
-                               href="/users">Listado de usuarios</a>
+                        <li><a class="dropdown-item" id="listUsers" href="/users">Listado de usuarios</a>
                         </li>
                     </ul>
                 </li>
@@ -83,7 +82,8 @@
             $(".container").append("<div class='alert " + messageType + "'>" + message + " </div>");
         }
     </script>
-    <!-- Contenido --> {% block main_container %} <!-- Posible contenido por defecto --> {% endblock %}
+    {% block main_container %}
+    {% endblock %}
 </div>
 </body>
 </html>
