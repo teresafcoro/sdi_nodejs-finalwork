@@ -26,8 +26,7 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarApp">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            {% if sessionUser and sessionUser != "admin@email.com" %}
-                <li>{{ sessionUser }} wallet: </li><!-- TO-DO: Valor del wallet del usuario -->
+            {% if session.user and session.user != "admin@email.com" %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="gestionOfertasMenu" role="button"
                        data-toggle="dropdown" aria-expanded="false"> Gestión de ofertas</a>

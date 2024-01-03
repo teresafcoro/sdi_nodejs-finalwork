@@ -1,15 +1,14 @@
 {% extends 'layout.twig' %}
 {% block main_container %}
     <h2>Ofertas</h2>
-    <p>{{ usser }}</p>
+    <p>{{ user }}</p>
     <div class="container">
         <div class="row">
             <div id="custom-search-input ">
                 <form method="get" action="/offers/shop">
-                    <div class="input-group col-xs-8 col-sm-6 col-md-4 col-lg-5 pull-right">
-                        <label class="control-label col-sm-2" for="search">Buscar:</label>
+                    <div class="input-group col-xs-50 col-sm-50 col-md-50 col-lg-50 pull-right">
                         <input id="search" type="text" class="search-query form-control"
-                               placeholder="Título de la oferta" name="search"/>
+                               placeholder="Título de la oferta" name="search" value=""/>
                         <span class="input-group-btn">
                             <button class="btn" type="submit">
                                 <span class="glyphicon glyphicon-search"></span>

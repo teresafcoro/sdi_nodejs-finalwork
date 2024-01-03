@@ -29,15 +29,16 @@ app.set('connectionStrings', url);
 
 // User Session Router
 const userSessionRouter = require('./routes/userSessionRouter');
+app.use("/offers/shop", userSessionRouter);
 app.use("/offers/add", userSessionRouter);
+app.use("offers/myoffers", userSessionRouter);
 app.use("/offers/buy", userSessionRouter);
 app.use("/offers/purchases", userSessionRouter);
-app.use("/offers/shop/", userSessionRouter);
 
 // User Seller Router
 const userSellerRouter = require('./routes/userSellerRouter');
-app.use("/offers/edit", userSellerRouter);
 app.use("/offers/delete", userSellerRouter);
+app.use("/offers/featured", userSellerRouter);
 
 // Rutas
 const usersRepository = require("./repositories/usersRepository.js");

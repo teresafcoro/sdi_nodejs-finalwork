@@ -1,11 +1,9 @@
 const express = require('express');
 const userSessionRouter = express.Router();
 userSessionRouter.use(function (req, res, next) {
-    console.log("routerUsuarioSession");
-    if (req.session.user) {
+    if (req.session.user && req.session.user !== "admin@email.com") { // Usuario Estándar
         next();
     } else {
-        console.log("va a: " + req.originalUrl);
         res.redirect("/users/login");
     }
 });
