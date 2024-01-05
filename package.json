@@ -3,6 +3,20 @@
   "description": "My Wallapop es una aplicación web basada en la compraventa de artículos",
   "version": "1.0.0",
   "dependencies": {
-    "express": "^4.17.1"
+    "body-parser": "^1.19.2",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "express-validator": "^7.0.1",
+    "http-errors": "~1.6.3",
+    "jsonwebtoken": "^9.0.0",
+    "log4js": "^6.9.1",
+    "mongodb": "^4.1.2",
+    "morgan": "~1.9.1",
+    "nodaemon": "^0.0.5",
+    "nodemon": "^2.0.15",
+    "request": "^2.88.2",
+    "twig": "~0.10.3"
   }
 }

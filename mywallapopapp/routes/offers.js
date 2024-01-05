@@ -53,7 +53,7 @@ module.exports = function (app, offersRepository) {
             };
             offersRepository.insertOffer(offer).then(offer => {
                 if (offer)
-                    res.render('users/myOffers.twig');
+                    res.render('offers/myOffers.twig');
             }).catch(() => {
                 res.redirect("/offers/add" +
                     "?message=No se pudo dar de alta la oferta" + "&messageType=alert-danger");
@@ -62,7 +62,7 @@ module.exports = function (app, offersRepository) {
             res.redirect("/offers/add" +
                 "?message=Datos incorrectos" + "&messageType=alert-danger");
     });
-    app.get('offers/myoffers', function (req, res) {
+    app.get('offers/my-offers', function (req, res) {
         let page = parseInt(req.query.page);
         if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0")
             page = 1;
@@ -79,7 +79,7 @@ module.exports = function (app, offersRepository) {
             let response = {offers: result.offers, pages: pages, currentPage: page};
             res.render('offers/myOffers.twig', response);
         }).catch(() => {
-            res.redirect("/offers/myoffers" +
+            res.redirect("/offers/my-offers" +
                 "?message=No se pudieron listar tus ofertas" + "&messageType=alert-danger");
         });
     });
@@ -87,17 +87,17 @@ module.exports = function (app, offersRepository) {
         let filter = {_id: ObjectId(req.params.id)};
         offersRepository.findOffer(filter, {}).then(offer => {
             if (offer && offer.isSold)
-                res.redirect("/offers/myOffers" +
+                res.redirect("/offers/my-offers" +
                     "?message=Oferta vendida, no se puede eliminar" + "&messageType=alert-danger");
             else {
                 offersRepository.deleteOffer(filter, {}).then(result => {
                     if (result === null || result.deletedCount === 0)
-                        res.redirect("/offers/myoffers" +
+                        res.redirect("/offers/my-offers" +
                             "?message=No se pudo eliminar la oferta" + "&messageType=alert-danger");
                     else
-                        res.redirect("/offers/myoffers");
+                        res.redirect("/offers/my-offers");
                 }).catch(() => {
-                    res.redirect("/offers/myoffers" +
+                    res.redirect("/offers/my-offers" +
                         "?message=No se pudo eliminar la oferta" + "&messageType=alert-danger");
                 });
             }
@@ -176,13 +176,13 @@ module.exports = function (app, offersRepository) {
                 offer.featured = true;
                 offersRepository.updateOffer(offer, filter, options).then(result => {
                     if (result !== null)
-                        res.redirect("/offers/myoffers");
+                        res.redirect("/offers/my-offers");
                     else
-                        res.redirect("/offers/myoffers" +
+                        res.redirect("/offers/my-offers" +
                             "?message=Error al destacar la oferta" + "&messageType=alert-danger");
                 });
             } else
-                res.redirect("/offers/myoffers" +
+                res.redirect("/offers/my-offers" +
                     "?message=Saldo insuficiente para destacar la oferta" + "&messageType=alert-danger");
         });
     });

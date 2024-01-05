@@ -20,20 +20,23 @@ module.exports = function (app, usersRepository) {
                 "?message=No se pudieron listar los usuarios" + "&messageType=alert-danger");
         });
     });
+    /**
+     * Renderizado a la vista de registro de usuario
+     */
     app.get('/users/signup', function (req, res) {
         res.render('users/signup.twig');
     });
+    /**
+     * Registro de usuario
+     */
     app.post('/users/signup', function (req, res) {
-        const parsedDate = new Date(req.body.dateOfBirth);
-        if (parsedDate.toString() === 'Invalid Date')
-            res.redirect("/users/signup" + "?message=Fecha inválida" + "&messageType=alert-danger");
-        else if (req.body.password !== req.body.verifyPassword)
+        const {email, name, surname, dateOfBirth, password, verifyPassword} = req.body;
+        if (password !== verifyPassword)
             res.redirect("/users/signup" +
                 "?message=Las contraseñas no coinciden" + "&messageType=alert-danger");
         else {
             let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
-                .update(req.body.password).digest('hex');
-            const {email, name, surname, dateOfBirth} = req.body;
+                .update(password).digest('hex');
             const wallet = 100; // cuenta de dinero con 100€ iniciales
             let user = {
                 email,
@@ -44,11 +47,11 @@ module.exports = function (app, usersRepository) {
                 kind: "Usuario Estándar",
                 password: securePassword
             };
-            usersRepository.findUser({email: user.email}, {}).then(dbUser => {
+            usersRepository.findUser({email: email}, {}).then(dbUser => {
                 if (dbUser === null) {
                     usersRepository.insertUser(user).then(user => {
                         req.session.user = user.email;
-                        res.render('offers/myOffers.twig', {sessionUser: req.session.user});
+                        res.render('offers/myOffers.twig', {sessionUser: user});
                     });
                 } else {
                     res.redirect("/users/signup" +
@@ -62,9 +65,15 @@ module.exports = function (app, usersRepository) {
             });
         }
     });
+    /**
+     * Renderizado a la vista de inicio de sesión
+     */
     app.get('/users/login', function (req, res) {
         res.render("users/login.twig");
     });
+    /**
+     * Inicio de sesión
+     */
     app.post('/users/login', function (req, res) {
         let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
@@ -80,9 +89,9 @@ module.exports = function (app, usersRepository) {
             } else {
                 req.session.user = user.email;
                 if (user.kind === 'Administrador')
-                    res.render('users/list.twig', {sessionUser: req.session.user});
+                    res.render('users/list.twig', {sessionUser: user});
                 else
-                    res.render('offers/myOffers.twig', {sessionUser: req.session.user});
+                    res.render('offers/myOffers.twig', {sessionUser: user});
             }
         }).catch(() => {
             req.session.user = null;
@@ -90,6 +99,9 @@ module.exports = function (app, usersRepository) {
                 + "?message=Se ha producido un error al buscar el usuario" + "&messageType=alert-danger");
         });
     });
+    /**
+     * Cierre de sesión
+     */
     app.get('/users/logout', function (req, res) {
         req.session.user = null;
         res.render('users/login.twig', {sessionUser: req.session.user});

@@ -26,14 +26,14 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarApp">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            {% if session.user and session.user != "admin@email.com" %}
+            {% if sessionUser and sessionUser.email != "admin@email.com" %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="gestionOfertasMenu" role="button"
                        data-toggle="dropdown" aria-expanded="false"> Gestión de ofertas</a>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="navbarDropdown"
                         id="gestionOfertasDropdown">
                         <a class="dropdown-item" id="addOffer" href="/offers/add">Añadir oferta</a>
-                        <a class="dropdown-item" href="/offers/myoffers" id="listMyOffers">
+                        <a class="dropdown-item" href="/offers/my-offers" id="listMyOffers">
                             Ver ofertas propias</a>
                         <a class="dropdown-item" href="/offers/shop" id="listOffers">
                             Ver ofertas para comprar </a>
@@ -41,7 +41,7 @@
                             Ver ofertas compradas</a>
                     </ul>
                 </li>
-            {% elseif sessionUser and sessionUser == "admin@email.com" %}
+            {% elseif sessionUser and sessionUser.email == "admin@email.com" %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="gestionUsuariosMenu" role="button"
                        data-toggle="dropdown" aria-expanded="false"> Gestión de usuarios</a>
@@ -62,9 +62,30 @@
                         <span class="glyphicon glyphicon-user"></span>Iniciar sesión</a>
                 </li>
             {% else %}
+                <li><a class="nav-link">
+                        <span class="glyphicon glyphicon-user"></span>
+                            {{ sessionUser.email }}</a>
+                </li>
+                <li><a class="nav-link">
+                        <span class="glyphicon glyphicon-user"></span>
+                        Wallet: {{ sessionUser.wallet }}</a>
+                </li>
                 <li><a href="/users/logout" class="nav-link">
                         <span class="glyphicon glyphicon-user"></span>Cerrar Sesión</a>
                 </li>
+                <!--
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="sessionUserMenu" role="button"
+                       data-toggle="dropdown" aria-expanded="false">{{ sessionUser.email }}</a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="navbarDropdown"
+                        id="sessionUserDropdown">
+                        <li>Wallet: {{ sessionUser.wallet }}</li>
+                        <li><a href="/users/logout" class="nav-link">
+                                <span class="glyphicon glyphicon-user"></span>Cerrar Sesión</a>
+                        </li>
+                    </ul>
+                </li>
+                -->
             {% endif %}
         </ul>
     </div>

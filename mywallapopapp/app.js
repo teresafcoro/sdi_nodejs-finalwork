@@ -31,7 +31,7 @@ app.set('connectionStrings', url);
 const userSessionRouter = require('./routes/userSessionRouter');
 app.use("/offers/shop", userSessionRouter);
 app.use("/offers/add", userSessionRouter);
-app.use("offers/myoffers", userSessionRouter);
+app.use("/offers/my-offers", userSessionRouter);
 app.use("/offers/buy", userSessionRouter);
 app.use("/offers/purchases", userSessionRouter);
 
