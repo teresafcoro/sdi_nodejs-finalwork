@@ -1,25 +1,5 @@
+let sessionUser = null;
 module.exports = function (app, usersRepository) {
-    app.get('/users', function (req, res) {
-        let page = parseInt(req.query.page);
-        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0")
-            page = 1;
-        let filter = {kind: 'Usuario Estándar'};
-        usersRepository.getUsersPg(filter, {}, page).then(result => {
-            let lastPage = result.total / 4;
-            if (result.total % 4 > 0)
-                lastPage = lastPage + 1;
-            let pages = [];
-            for (let i = page - 2; i <= page + 2; i++) {
-                if (i > 0 && i <= lastPage)
-                    pages.push(i);
-            }
-            let response = {users: result.users, pages: pages, currentPage: page};
-            res.render('users/list.twig', response);
-        }).catch(() => {
-            res.redirect("/users" +
-                "?message=No se pudieron listar los usuarios" + "&messageType=alert-danger");
-        });
-    });
     /**
      * Renderizado a la vista de registro de usuario
      */
@@ -51,7 +31,8 @@ module.exports = function (app, usersRepository) {
                 if (dbUser === null) {
                     usersRepository.insertUser(user).then(user => {
                         req.session.user = user.email;
-                        res.render('offers/myOffers.twig', {sessionUser: user});
+                        sessionUser = user;
+                        res.render('offers/myOffers.twig', {sessionUser: sessionUser});
                     });
                 } else {
                     res.redirect("/users/signup" +
@@ -84,14 +65,16 @@ module.exports = function (app, usersRepository) {
         usersRepository.findUser(filter, {}).then(user => {
             if (user == null) {
                 req.session.user = null;
+                sessionUser = null;
                 res.redirect("/users/login"
                     + "?message=Email o contraseña incorrecta" + "&messageType=alert-danger");
             } else {
                 req.session.user = user.email;
+                sessionUser = user;
                 if (user.kind === 'Administrador')
-                    res.render('users/list.twig', {sessionUser: user});
+                    res.render('users/list.twig', {sessionUser: sessionUser});
                 else
-                    res.render('offers/myOffers.twig', {sessionUser: user});
+                    res.render('offers/myOffers.twig', {sessionUser: sessionUser});
             }
         }).catch(() => {
             req.session.user = null;
@@ -104,9 +87,42 @@ module.exports = function (app, usersRepository) {
      */
     app.get('/users/logout', function (req, res) {
         req.session.user = null;
+        sessionUser = null;
         res.render('users/login.twig', {sessionUser: req.session.user});
     });
-    app.get('/users/delete', function (req, res) {
+    /**
+     * Listado de usuarios del sistema
+     */
+    app.get('/users', function (req, res) {
+        let page = parseInt(req.query.page);
+        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0")
+            page = 1;
+        let filter = {kind: 'Usuario Estándar'};
+        usersRepository.getUsersPg(filter, {}, page).then(result => {
+            let lastPage = result.total / 4;
+            if (result.total % 4 > 0)
+                lastPage = lastPage + 1;
+            let pages = [];
+            for (let i = page - 2; i <= page + 2; i++) {
+                if (i > 0 && i <= lastPage)
+                    pages.push(i);
+            }
+            let response = {
+                users: result.users,
+                pages: pages,
+                currentPage: page,
+                sessionUser: sessionUser
+            };
+            res.render('users/list.twig', response);
+        }).catch(() => {
+            res.redirect("/users" +
+                "?message=No se pudieron listar los usuarios" + "&messageType=alert-danger");
+        });
+    });
+    /**
+     * Borrado múltiple de usuarios
+     */
+    app.post('/users/delete', function (req, res) {
         let usersEmails = [];
         usersEmails = usersEmails.concat(req.body.userEmails);
         let filter = {email: {$in: usersEmails}};
