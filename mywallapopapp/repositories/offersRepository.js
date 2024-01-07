@@ -12,7 +12,7 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
-    }, getUsersOffersPg: async function (filter, options, page) {
+    }, getUserOffersPg: async function (filter, options, page) {
         try {
             const limit = 4;
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
@@ -32,8 +32,7 @@ module.exports = {
             const database = client.db("myWallapop");
             const collectionName = 'offers';
             const offersCollection = database.collection(collectionName);
-            const result = await offersCollection.deleteOne(filter, options);
-            return result;
+            return await offersCollection.deleteOne(filter, options);
         } catch (error) {
             throw error;
         }

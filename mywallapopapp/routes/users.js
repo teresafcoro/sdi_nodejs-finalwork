@@ -1,4 +1,3 @@
-let sessionUser = null;
 module.exports = function (app, usersRepository) {
     /**
      * Renderizado a la vista de registro de usuario
@@ -31,8 +30,7 @@ module.exports = function (app, usersRepository) {
                 if (dbUser === null) {
                     usersRepository.insertUser(user).then(user => {
                         req.session.user = user.email;
-                        sessionUser = user;
-                        res.render('offers/myOffers.twig', {sessionUser: sessionUser});
+                        res.render('offers/myOffers.twig', {sessionUser: req.session.user});
                     });
                 } else {
                     res.redirect("/users/signup" +
@@ -65,16 +63,14 @@ module.exports = function (app, usersRepository) {
         usersRepository.findUser(filter, {}).then(user => {
             if (user == null) {
                 req.session.user = null;
-                sessionUser = null;
                 res.redirect("/users/login"
                     + "?message=Email o contraseña incorrecta" + "&messageType=alert-danger");
             } else {
-                req.session.user = user.email;
-                sessionUser = user;
+                req.session.user = user;
                 if (user.kind === 'Administrador')
-                    res.render('users/list.twig', {sessionUser: sessionUser});
+                    res.render('users/list.twig', {sessionUser: req.session.user});
                 else
-                    res.render('offers/myOffers.twig', {sessionUser: sessionUser});
+                    res.render('offers/myOffers.twig', {sessionUser: req.session.user});
             }
         }).catch(() => {
             req.session.user = null;
@@ -87,7 +83,6 @@ module.exports = function (app, usersRepository) {
      */
     app.get('/users/logout', function (req, res) {
         req.session.user = null;
-        sessionUser = null;
         res.render('users/login.twig', {sessionUser: req.session.user});
     });
     /**
@@ -111,7 +106,7 @@ module.exports = function (app, usersRepository) {
                 users: result.users,
                 pages: pages,
                 currentPage: page,
-                sessionUser: sessionUser
+                sessionUser: req.session.user
             };
             res.render('users/list.twig', response);
         }).catch(() => {

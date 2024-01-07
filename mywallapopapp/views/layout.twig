@@ -32,11 +32,12 @@
                        data-toggle="dropdown" aria-expanded="false"> Gestión de ofertas</a>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="navbarDropdown"
                         id="gestionOfertasDropdown">
-                        <a class="dropdown-item" id="addOffer" href="/offers/add">Añadir oferta</a>
-                        <a class="dropdown-item" href="/offers/my-offers" id="listMyOffers">
+                        <a class="dropdown-item" id="addOffer" href="/offers/add">
+                            Dar de alta una oferta</a>
+                        <a class="dropdown-item" href="/offers/myOffers" id="listMyOffers">
                             Ver ofertas propias</a>
                         <a class="dropdown-item" href="/offers/shop" id="listOffers">
-                            Ver ofertas para comprar </a>
+                            Ver ofertas para comprar</a>
                         <a class="dropdown-item" href="/offers/purchases" id="listPurchases">
                             Ver ofertas compradas</a>
                     </ul>
@@ -73,19 +74,6 @@
                 <li><a href="/users/logout" class="nav-link">
                         <span class="glyphicon glyphicon-user"></span>Cerrar Sesión</a>
                 </li>
-                <!--
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="sessionUserMenu" role="button"
-                       data-toggle="dropdown" aria-expanded="false">{{ sessionUser.email }}</a>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="navbarDropdown"
-                        id="sessionUserDropdown">
-                        <li>Wallet: {{ sessionUser.wallet }}</li>
-                        <li><a href="/users/logout" class="nav-link">
-                                <span class="glyphicon glyphicon-user"></span>Cerrar Sesión</a>
-                        </li>
-                    </ul>
-                </li>
-                -->
             {% endif %}
         </ul>
     </div>

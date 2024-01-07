@@ -31,14 +31,12 @@ app.set('connectionStrings', url);
 const userSessionRouter = require('./routes/userSessionRouter');
 app.use("/offers/shop", userSessionRouter);
 app.use("/offers/add", userSessionRouter);
-app.use("/offers/my-offers", userSessionRouter);
+app.use("/offers/myOffers", userSessionRouter);
 app.use("/offers/buy", userSessionRouter);
 app.use("/offers/purchases", userSessionRouter);
 
-// User Seller Router
-const userSellerRouter = require('./routes/userSellerRouter');
-app.use("/offers/delete", userSellerRouter);
-app.use("/offers/featured", userSellerRouter);
+// app.use("/offers/delete", userSessionRouter);
+app.use("/offers/featured", userSessionRouter);
 
 // Rutas
 const usersRepository = require("./repositories/usersRepository.js");
