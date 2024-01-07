@@ -26,7 +26,7 @@ module.exports = function (app, usersRepository) {
                 kind: "Usuario Estándar",
                 password: securePassword
             };
-            usersRepository.findUser({email: email}, {}).then(dbUser => {
+            usersRepository.getUser({email: email}, {}).then(dbUser => {
                 if (dbUser === null) {
                     usersRepository.insertUser(user).then(user => {
                         req.session.user = user.email;
@@ -60,7 +60,7 @@ module.exports = function (app, usersRepository) {
             email: req.body.email,
             password: securePassword
         };
-        usersRepository.findUser(filter, {}).then(user => {
+        usersRepository.getUser(filter, {}).then(user => {
             if (user == null) {
                 req.session.user = null;
                 res.redirect("/users/login"

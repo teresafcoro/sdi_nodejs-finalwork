@@ -1,5 +1,5 @@
 const {ObjectId} = require("mongodb");
-module.exports = function (app, offersRepository) {
+module.exports = function (app, offersRepository, usersRepository) {
     /**
      * Renderizado a la vista de creación de ofertas
      */
@@ -13,6 +13,7 @@ module.exports = function (app, offersRepository) {
         if (req.body.title && req.body.title !== ''
             && req.body.detail && req.body.detail !== '' && req.body.price > 0) {
             let {title, detail, price, featured} = req.body;
+            price = parseInt(price);
             if (featured && req.session.user.wallet < 20)
                 res.redirect("/offers/add" +
                     "?message=Dinero insuficiente para destacar la oferta (precio: 20€)"
@@ -73,7 +74,7 @@ module.exports = function (app, offersRepository) {
      */
     app.get('/offers/delete/:id', function (req, res) {
         let filter = {_id: ObjectId(req.params.id)};
-        offersRepository.findOffer(filter, {}).then(offer => {
+        offersRepository.getOffer(filter, {}).then(offer => {
             if (offer && offer.isSold)
                 res.redirect("/offers/myOffers" +
                     "?message=Oferta vendida, no se puede eliminar" + "&messageType=alert-danger");
@@ -95,10 +96,15 @@ module.exports = function (app, offersRepository) {
                 "?message=No se pudo encontrar la oferta" + "&messageType=alert-danger");
         });
     });
+    /**
+     * Ofertas del sistema con sistema de búsqueda por título
+     */
     app.get('/offers/shop', function (req, res) {
         let filter = {};
-        let options = {sort: {title: 1}};
-        if (req.query.search != null && typeof (req.query.search) != "undefined" && req.query.search !== "") {
+        if (req.query.search != null &&
+            typeof (req.query.search) != "undefined" &&
+            req.query.search !== "") {
+            // Búsqueda por título insensible a mayúsculas y minúsculas
             filter = {
                 "title": {
                     $regex: ".*" + req.query.search + ".*",
@@ -109,58 +115,7 @@ module.exports = function (app, offersRepository) {
         let page = parseInt(req.query.page);
         if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0")
             page = 1;
-        offersRepository.getOffersPg(filter, options, page).then(result => {
-            let lastPage = result.total / 5;
-            if (result.total % 5 > 0)
-                lastPage = lastPage + 1;
-            let pages = [];
-            for (let i = page - 2; i <= page + 2; i++) {
-                if (i > 0 && i <= lastPage)
-                    pages.push(i);
-            }
-            let response = {offers: result.offers, pages: pages, currentPage: page};
-            res.render("offers/shop.twig", response);
-        }).catch(() => {
-            res.redirect("/offers/shop" +
-                "?message=Se produjo un error al listar las ofertas" + "&messageType=alert-danger");
-        });
-    });
-    app.get('/offers/buy/:id', function (req, res) {
-        let offerId = ObjectId(req.params.id);
-        let user = req.session.user;
-        let filter = {_id: offerId};
-        offersRepository.findOffer(filter, {}).then(offer => {
-            if (offer.seller !== user && offer.price <= user.wallet) {
-                let shop = {user: user, offerId: offerId};
-                offersRepository.buyOffer(shop, function (shopId) {
-                    if (shopId !== null) {
-                        res.redirect("/offers/shop" +
-                            "?message=Error al realizar la compra" + "&messageType=alert-danger");
-                    } else {
-                        user.wallet -= offer.price; // TO-DO?
-                        offer.isSold = true;
-                        offersRepository.updateOffer(offer, filter, {}).then(result => {
-                            if (result !== null)
-                                res.redirect("/offers/purchases");
-                            else
-                                res.redirect("/offers/shop" +
-                                    "?message=Error al actualizar la oferta" + "&messageType=alert-danger");
-                        });
-
-                    }
-                });
-            } else
-                res.redirect("/offers/shop" +
-                    "?message=Es su oferta o saldo insuficiente" + "&messageType=alert-danger");
-        });
-    });
-    app.get('/offers/purchases', function (req, res) {
-        let page = parseInt(req.query.page);
-        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0")
-            page = 1;
-        let filter = {user: req.session.user};
-        let options = {projection: {_id: 0, offerId: 1}};
-        offersRepository.getPurchasesPg(filter, options, page).then(result => {
+        offersRepository.getOffersPg(filter, {}, page).then(result => {
             let lastPage = result.total / 4;
             if (result.total % 4 > 0)
                 lastPage = lastPage + 1;
@@ -169,20 +124,87 @@ module.exports = function (app, offersRepository) {
                 if (i > 0 && i <= lastPage)
                     pages.push(i);
             }
-            let purchases = [];
-            for (let i = 0; i < result.purchaseIds.length; i++)
-                purchases.push(result.purchaseIds[i].offerId);
-            let filter = {"_id": {$in: purchases}};
-            let options = {sort: {title: 1}};
-            offersRepository.getOffers(filter, options).then(offers => {
-                res.render("offers/purchase.twig", {offers: offers});
-            }).catch(() => {
-                res.redirect("/offers/shop" +
-                    "?message=Se ha producido un error al listar tus ofertas compradas"
-                    + "&messageType=alert-danger");
-            });
+            let response = {
+                offers: result.offers,
+                pages: pages,
+                currentPage: page,
+                sessionUser: req.session.user,
+                search: req.query.search
+            }; // Se añade el parámetro de búsqueda al objeto de respuesta
+            res.render("offers/shop.twig", response);
         }).catch(() => {
             res.redirect("/offers/shop" +
+                "?message=Se produjo un error al listar las ofertas" + "&messageType=alert-danger");
+        });
+    });
+    /**
+     * Comprar una oferta
+     */
+    app.get('/offers/buy/:id', function (req, res) {
+        let offerId = ObjectId(req.params.id);
+        let user = req.session.user;
+        let filter = {_id: offerId};
+        offersRepository.getOffer(filter, {}).then(offer => {
+            if (offer.seller !== user.email && offer.price <= user.wallet) {
+                offer.isSold = true;
+                let shop = {buyer: user.email, offer: offer};
+                offersRepository.buyOffer(shop, function (shopId) {
+                    if (shopId === null)
+                        res.redirect("/offers/shop" +
+                            "?message=Error al realizar la compra" + "&messageType=alert-danger");
+                    else {
+                        user.wallet -= offer.price;
+                        req.session.user = user;
+                        updateUser(user); // With the new wallet value
+                        offersRepository.updateOffer(offer, filter, {}).then(result => {
+                            if (result !== null)
+                                res.redirect("/offers/purchases");
+                        }).catch(() => {
+                            res.redirect("/offers/shop" +
+                                "?message=Error al actualizar la oferta" + "&messageType=alert-danger");
+                        });
+                    }
+                });
+            } else if (offer.seller === user.email)
+                res.redirect("/offers/shop" +
+                    "?message=¡Es su oferta!" + "&messageType=alert-danger");
+            else
+                res.redirect("/offers/shop" +
+                    "?message=Saldo insuficiente para realizar la compra" + "&messageType=alert-danger");
+        }).catch(() => {
+            res.redirect("/offers/shop" +
+                "?message=Error al obtener la oferta" + "&messageType=alert-danger");
+        });
+    });
+    /**
+     * Ver el listado de ofertas compradas
+     */
+    app.get('/offers/purchases', function (req, res) {
+        let page = parseInt(req.query.page);
+        if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0")
+            page = 1;
+        let filter = {"buyer": req.session.user.email};
+        offersRepository.getPurchasesPg(filter, {}, page).then(result => {
+            let lastPage = result.total / 4;
+            if (result.total % 4 > 0)
+                lastPage = lastPage + 1;
+            let pages = [];
+            for (let i = page - 2; i <= page + 2; i++) {
+                if (i > 0 && i <= lastPage)
+                    pages.push(i);
+            }
+            let offers = [];
+            for (let i = 0; i < result.purchases.length(); i++)
+                offers.push(result.purchases[i].offer);
+            let response = {
+                offers: offers,
+                pages: pages,
+                currentPage: page,
+                sessionUser: req.session.user
+            };
+            res.render("offers/purchases.twig", response);
+        }).catch(() => {
+            res.redirect("/offers/purchases" +
                 "?message=Se ha producido un error al listar tus ofertas compradas"
                 + "&messageType=alert-danger");
         });
@@ -191,7 +213,7 @@ module.exports = function (app, offersRepository) {
         let offerId = ObjectId(req.params.id);
         let filter = {_id: offerId};
         let user = req.session.user;
-        offersRepository.findOffer(filter, {}).then(offer => {
+        offersRepository.getOffer(filter, {}).then(offer => {
             if (user.wallet >= 20) { // coste de destacar una oferta
                 user.wallet -= 20;
                 offer.featured = true;
@@ -207,4 +229,20 @@ module.exports = function (app, offersRepository) {
                     "?message=Saldo insuficiente para destacar la oferta" + "&messageType=alert-danger");
         });
     });
+
+    function updateUser(user) {
+        usersRepository.getUser({email: user.email}, {}).then(dbUser => {
+            if (dbUser !== null) {
+                const updateField = {wallet: user.wallet};
+                usersRepository.updateUser(updateField, {_id: dbUser._id}, {}).then(result => {
+                    if (result === null)
+                        res.redirect("/offers/shop" +
+                            "?message=Error al actualizar el usuario" + "&messageType=alert-danger");
+                });
+            }
+        }).catch(() => {
+            res.redirect("/offers/shop" +
+                "?message=Error al actualizar el usuario" + "&messageType=alert-danger");
+        });
+    }
 }

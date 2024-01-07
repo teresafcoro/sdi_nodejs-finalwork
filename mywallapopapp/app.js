@@ -34,8 +34,6 @@ app.use("/offers/add", userSessionRouter);
 app.use("/offers/myOffers", userSessionRouter);
 app.use("/offers/buy", userSessionRouter);
 app.use("/offers/purchases", userSessionRouter);
-
-// app.use("/offers/delete", userSessionRouter);
 app.use("/offers/featured", userSessionRouter);
 
 // Rutas
@@ -45,7 +43,7 @@ require("./routes/users.js")(app, usersRepository);
 
 const offersRepository = require("./repositories/offersRepository.js");
 offersRepository.init(app, MongoClient);
-require("./routes/offers.js")(app, offersRepository);
+require("./routes/offers.js")(app, offersRepository, usersRepository);
 
 let indexRouter = require('./routes/index');
 

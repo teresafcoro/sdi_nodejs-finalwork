@@ -2,7 +2,7 @@ module.exports = {
     mongoClient: null, app: null, init: function (app, mongoClient) {
         this.mongoClient = mongoClient;
         this.app = app;
-    }, findUser: async function (filter, options) {
+    }, getUser: async function (filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
             const database = client.db("myWallapop");
@@ -45,6 +45,16 @@ module.exports = {
             return await usersCollection.deleteMany(filter, options);
         } catch (error) {
             throw (error);
+        }
+    }, updateUser: async function (user, filter, options) {
+        try {
+            const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
+            const database = client.db("myWallapop");
+            const collectionName = 'users';
+            const usersCollection = database.collection(collectionName);
+            return await usersCollection.updateOne(filter, {$set: user}, options);
+        } catch (error) {
+            throw(error);
         }
     }
 };

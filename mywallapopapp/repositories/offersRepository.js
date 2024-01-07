@@ -36,7 +36,7 @@ module.exports = {
         } catch (error) {
             throw error;
         }
-    }, findOffer: async function (filter, options) {
+    }, getOffer: async function (filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
             const database = client.db("myWallapop");
@@ -93,8 +93,8 @@ module.exports = {
             const purchasesCollection = database.collection(collectionName);
             const purchasesCollectionCount = await purchasesCollection.count();
             const cursor = purchasesCollection.find(filter, options).skip((page - 1) * limit).limit(limit);
-            const purchaseIds = await cursor.toArray();
-            return {purchaseIds: purchaseIds, total: purchasesCollectionCount};
+            const purchases = await cursor.toArray();
+            return {purchases: purchases, total: purchasesCollectionCount};
         } catch (error) {
             throw (error);
         }
