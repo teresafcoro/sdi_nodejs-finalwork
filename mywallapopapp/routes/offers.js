@@ -30,8 +30,11 @@ module.exports = function (app, offersRepository, usersRepository) {
                 seller: req.session.user.email
             };
             offersRepository.insertOffer(offer).then(offer => {
-                if (offer)
+                if (offer) {
+                    // Actualización del wallet del usuario en la bbdd
+                    updateUser(req.session.user);
                     res.render('offers/myOffers.twig', {sessionUser: req.session.user});
+                }
             }).catch(() => {
                 res.redirect("/offers/add" +
                     "?message=No se pudo dar de alta la oferta" + "&messageType=alert-danger");
@@ -183,7 +186,7 @@ module.exports = function (app, offersRepository, usersRepository) {
         let page = parseInt(req.query.page);
         if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0")
             page = 1;
-        let filter = {"buyer": req.session.user.email};
+        let filter = {"buyer": {$eq: req.session.user.email}};
         offersRepository.getPurchasesPg(filter, {}, page).then(result => {
             let lastPage = result.total / 4;
             if (result.total % 4 > 0)
@@ -193,9 +196,10 @@ module.exports = function (app, offersRepository, usersRepository) {
                 if (i > 0 && i <= lastPage)
                     pages.push(i);
             }
-            let offers = [];
-            for (let i = 0; i < result.purchases.length(); i++)
-                offers.push(result.purchases[i].offer);
+            let offers = []; // Ofertas de la colección purchases del comprador en sesión
+            result.purchases.forEach(purchase => {
+                offers.push(purchase.offer);
+            });
             let response = {
                 offers: offers,
                 pages: pages,
@@ -209,6 +213,9 @@ module.exports = function (app, offersRepository, usersRepository) {
                 + "&messageType=alert-danger");
         });
     });
+    /**
+     * Marcar una oferta como destacada (featured)
+     */
     app.get('/offers/featured/:id', function (req, res) {
         let offerId = ObjectId(req.params.id);
         let filter = {_id: offerId};
@@ -216,20 +223,29 @@ module.exports = function (app, offersRepository, usersRepository) {
         offersRepository.getOffer(filter, {}).then(offer => {
             if (user.wallet >= 20) { // coste de destacar una oferta
                 user.wallet -= 20;
-                offer.featured = true;
+                offer.featured = "on";
                 offersRepository.updateOffer(offer, filter, {}).then(result => {
-                    if (result !== null)
+                    if (result !== null) {
+                        req.session.user = user;
+                        updateUser(user);
                         res.redirect("/offers/myOffers");
-                    else
+                    } else
                         res.redirect("/offers/myOffers" +
                             "?message=Error al destacar la oferta" + "&messageType=alert-danger");
                 });
             } else
                 res.redirect("/offers/myOffers" +
                     "?message=Saldo insuficiente para destacar la oferta" + "&messageType=alert-danger");
-        });
+        }).catch(() => {
+            res.redirect("/offers/myOffers" +
+                "?message=Error al obtener la oferta" + "&messageType=alert-danger");
+        })
     });
 
+    /**
+     * Update the user by calling user's repository update method
+     * @param user, to be updated
+     */
     function updateUser(user) {
         usersRepository.getUser({email: user.email}, {}).then(dbUser => {
             if (dbUser !== null) {

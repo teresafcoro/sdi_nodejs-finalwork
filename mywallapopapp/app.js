@@ -34,7 +34,6 @@ app.use("/offers/add", userSessionRouter);
 app.use("/offers/myOffers", userSessionRouter);
 app.use("/offers/buy", userSessionRouter);
 app.use("/offers/purchases", userSessionRouter);
-app.use("/offers/featured", userSessionRouter);
 
 // Rutas
 const usersRepository = require("./repositories/usersRepository.js");
