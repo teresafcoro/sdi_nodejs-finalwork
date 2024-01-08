@@ -6,6 +6,10 @@ let logger = require('morgan');
 
 let app = express();
 
+// JWT
+let jwt = require('jsonwebtoken');
+app.set('jwt', jwt);
+
 // Express session
 let expressSession = require('express-session');
 app.use(expressSession({secret: 'abcdefg', resave: true, saveUninitialized: true}));
@@ -44,7 +48,12 @@ const userSellerRouter = require('./routes/userSellerRouter');
 app.use("/offers/delete", userSellerRouter);
 app.use("/offers/featured", userSellerRouter);
 
+// User Token Router
+const userTokenRouter = require('./routes/userTokenRouter');
+app.use("/api/v1.0/offers", userTokenRouter);
+
 // Rutas
+
 const usersRepository = require("./repositories/usersRepository.js");
 usersRepository.init(app, MongoClient);
 require("./routes/users.js")(app, usersRepository);
@@ -52,6 +61,15 @@ require("./routes/users.js")(app, usersRepository);
 const offersRepository = require("./repositories/offersRepository.js");
 offersRepository.init(app, MongoClient);
 require("./routes/offers.js")(app, offersRepository, usersRepository);
+
+const conversationsRepository = require("./repositories/conversationsRepository.js");
+conversationsRepository.init(app, MongoClient);
+
+const messagesRepository = require("./repositories/messagesRepository.js");
+messagesRepository.init(app, MongoClient);
+
+require('./routes/api/myWallapopAPIv1.0.js')
+(app, usersRepository, offersRepository, conversationsRepository, messagesRepository);
 
 let logsRepository = require("./repositories/logsRepository.js");
 logsRepository.init(app, MongoClient);
