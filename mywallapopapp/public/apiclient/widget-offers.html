@@ -1,0 +1,109 @@
+<div id="widget-songs">
+    <input type="text" class="form-control" placeholder="Filtrar por nombre"
+           id="filter-by-name"/>
+    <button class="btn" onclick="loadAllAvailableOffers">Actualizar</button>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Título</th>
+            <th>Detalle</th>
+            <th>Precio</th>
+            <th>Fecha publicación</th>
+            <th>Email del vendedor</th>
+            <th>Conversación</th>
+        </tr>
+        </thead>
+        <tbody id="offersTableBody"></tbody>
+    </table>
+</div>
+
+<script>
+    loadAllAvailableOffers();
+    loadAllConvers();
+
+    /**
+     * Actualiza la tabla de ofertas con los datos de la lista de ofertas
+     * disponibles. Se excluyen las ofertas publicadas por el usuario en
+     * sesión.
+     */
+    function loadAllAvailableOffers() {
+        $.ajax({
+            url: URLbase + "/offers",
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: {
+                "token": token
+            },
+            success: function (response) {
+                offers = response.offers;
+                updateOffersTable(offers);
+            },
+            error: function (error) {
+                // console.error("Error al cargar las ofertas. ", error);
+                $("#main-container").load("widget-login.html");
+            }
+        });
+    }
+    /**
+     * Actualiza la tabla con todas las ofertas de los usuarios, salvo aquellas
+     * publicadas por el usuario en sesión.
+     *
+     * @param offers Listado de ofertas disponibles
+     */
+    function updateOffersTable(offers) {
+        $("#offersTableBody").empty(); // Vaciar la tabla
+        if (offers.length === 0) {
+            $("#offersTableBody").append(
+                "<tr>" +
+                "<td colspan='5'>No hay ofertas disponibles</td>" +
+                "</tr>");
+        } else {
+            for (let i = 0; i < offers.length; i++) {
+                $("#offersTableBody").append(
+                    "<tr>" +
+                    "<td>" + offers[i].title + "</td>" +
+                    "<td>" + offers[i].description + "</td>" +
+                    "<td>" + offers[i].price + "€</td>" +
+                    "<td>" + offers[i].date + "</td>" +
+                    "<td>" + offers[i].seller + "</td>" +
+                    "<td><button  id =conver" + i + " class=\"btn btn-primary\" onclick=\"offerConversation('" + i + "')\">Conversacion</button></td>" +
+                    "</tr>"
+                );
+            }
+        }
+    }
+    function loadAllConvers() {
+        $.ajax({
+            url: URLbase + "/conversations",
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: {
+                "token": token
+            },
+            success: function (response) {
+                conversations = response.conversations;
+            },
+            error: function (error) {
+                // console.error("Error al cargar las ofertas. ", error);
+                $("#main-container").load("widget-login.html");
+            }
+        });
+    }
+    function offerConversation(index) {
+        selectedId = offers[index]._id;
+        seller = offers[index].seller;
+        title = offers[index].title;
+        selectConversation();
+        $("#main-container").load("widget-conversation.html");
+    }
+    function selectConversation() {
+        let aux;
+        for (let i = 0; i < conversations.length; i++) {
+            if (selectedId === conversations[i].offer)
+                aux = conversations[i]._id;
+        }
+        idConversation = aux;
+    }
+</script>
