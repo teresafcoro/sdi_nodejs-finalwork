@@ -1,0 +1,107 @@
+{% extends 'layout.twig' %}
+{% block main_container %}
+<h2>Ofertas de My Wallapop</h2>
+<div class="container">
+    <h3>Búsqueda por Título</h3>
+    <div class="row">
+        <div id="custom-search-input ">
+            <form method="get" action="/offers/shop">
+                <div class="input-group col-xs-50 col-sm-50 col-md-50 col-lg-50 pull-right">
+                    <input id="search" type="text" class="search-query form-control"
+                           placeholder="Título de la oferta" name="search" value=""/>
+                    <span class="input-group-btn">
+                        <button class="btn" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+    <h3>Ofertas destacadas</h3>
+    <div class="row">
+        {% if offers.length > 0 %}
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Detalle</th>
+                    <th>Fecha de publicación</th>
+                    <th>Precio</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for offer in offers %}
+                    {% if offer.featured %}
+                        <tr>
+                            <td>{{ offer.title }}</td>
+                            <td>{{ offer.detail }}</td>
+                            <td>{{ offer.publicationDate }}</td>
+                            <td>{{ offer.price }}</td>
+                            <td>{% if offer.isSold %}
+                                    <p>Vendido</p>
+                                {% else %}
+                                    <a href="/offers/buy/{{ offer._id }}"
+                                       class="btn btn-primary">Comprar</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No tiene ofertas destacadas</p>
+        {% endif %}
+    </div>
+    <h3>Ofertas</h3>
+    <div class="row">
+        {% if offers.length > 0 %}
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Detalle</th>
+                    <th>Fecha de publicación</th>
+                    <th>Precio</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for offer in offers %}
+                    <tr>
+                        <td>{{ offer.title }}</td>
+                        <td>{{ offer.detail }}</td>
+                        <td>{{ offer.publicationDate }}</td>
+                        <td>{{ offer.price }}</td>
+                        <td>{% if offer.isSold %}
+                                <p>Vendido</p>
+                            {% else %}
+                                <a href="/offers/buy/{{ offer._id }}"
+                                   class="btn btn-primary">Comprar</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No existen ofertas</p>
+        {% endif %}
+    </div>
+    <div class="row text-center">
+        <ul class="pagination">
+            {% for page in pages %}
+                <li class="page-item" id="pi-{{ page }}">
+                    <a class="page-link"
+                       href="/offers/shop/?page={{ page }}&search={{ search }}">{{ page }}</a>
+                </li>
+            {% endfor %}
+            <script>
+                $("#pi-" + "{{ currentPage }}").addClass("active");
+            </script>
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'layout.twig' %}
+{% block main_container %}
+<h2>Mis compras</h2>
+<div class="container">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Detalle</th>
+                    <th>Precio</th>
+                    <th>Email del vendedor</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for offer in offers %}
+                    <tr>
+                        <td>{{ offer.title }}</td>
+                        <td>{{ offer.detail }}</td>
+                        <td>{{ offer.price }}</td>
+                        <td>{{ offer.seller }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="row text-center">
+        <ul class="pagination">
+            {% for page in pages %}
+                <li class="page-item" id="pi-{{ page }}">
+                    <a class="page-link"
+                       href="/offers/purchases/?page={{ page }}">{{ page }}</a>
+                </li>
+            {% endfor %}
+            <script>
+                $("#pi-" + "{{ currentPage }}").addClass("active");
+            </script>
+        </ul>
+    </div>
+</div>
+{% endblock %}

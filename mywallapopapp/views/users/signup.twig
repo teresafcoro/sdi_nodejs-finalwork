@@ -1,0 +1,53 @@
+{% extends 'layout.twig' %}
+{% block main_container %}
+    <h2>Registrar usuario</h2>
+    <form class="form-horizontal" method="post" action="/users/signup">
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="email">Email:</label>
+            <div class="col-sm-10">
+                <input id="email" type="email" class="form-control" name="email"
+                       placeholder="email@email.com" required />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="name">Nombre:</label>
+            <div class="col-sm-10">
+                <input id="name" type="text" class="form-control" name="name"
+                       placeholder="nombre" required />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="surname">Apellidos:</label>
+            <div class="col-sm-10">
+                <input id="surname" type="text" class="form-control" name="surname"
+                       placeholder="apellidos" required />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="dateOfBirth">Fecha de nacimiento:</label>
+            <div class="col-sm-10">
+                <input id="dateOfBirth" type="date" class="form-control" name="dateOfBirth"
+                       placeholder="DD/MM/AAAA" required />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="password">Contraseña:</label>
+            <div class="col-sm-10">
+                <input id="password" type="password" class="form-control" name="password"
+                       placeholder="contraseña" required />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="verifyPassword">Repite la contraseña:</label>
+            <div class="col-sm-10">
+                <input id="verifyPassword" type="password" class="form-control" name="verifyPassword"
+                       placeholder="contraseña" required />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Registrar</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

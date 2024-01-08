@@ -1,10 +1,97 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>{{ title }}</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    {% block body %}{% endblock %}
-  </body>
+<html lang="en">
+<head>
+    <title>{% block title %}My Wallapop{% endblock %}</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+    <link rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ"
+          crossorigin="anonymous"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/stylesheets/admin.css"/>
+    {% block scripts %}{% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <h1>My Wallapop</h1>
+    <button class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarTogglerDemo01"
+            aria-controls="navbarTogglerDemo01" aria-expanded="false"
+            aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarApp">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            {% if sessionUser and sessionUser.email != "admin@email.com" %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="gestionOfertasMenu" role="button"
+                       data-toggle="dropdown" aria-expanded="false"> Gestión de ofertas</a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="navbarDropdown"
+                        id="gestionOfertasDropdown">
+                        <a class="dropdown-item" id="addOffer" href="/offers/add">
+                            Dar de alta una oferta</a>
+                        <a class="dropdown-item" href="/offers/myOffers" id="listMyOffers">
+                            Ver ofertas propias</a>
+                        <a class="dropdown-item" href="/offers/shop" id="listOffers">
+                            Ver ofertas para comprar</a>
+                        <a class="dropdown-item" href="/offers/purchases" id="listPurchases">
+                            Ver ofertas compradas</a>
+                    </ul>
+                </li>
+            {% elseif sessionUser and sessionUser.email == "admin@email.com" %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="gestionUsuariosMenu" role="button"
+                       data-toggle="dropdown" aria-expanded="false"> Gestión de usuarios</a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="navbarDropdown"
+                        id="gestionUsuariosDropdown">
+                        <li><a class="dropdown-item" id="listUsers" href="/users">Listado de usuarios</a>
+                        </li>
+                    </ul>
+                </li>
+            {% endif %}
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            {% if not sessionUser %}
+                <li><a href="/users/signup" class="nav-link">
+                        <span class="glyphicon glyphicon-user"></span>Registrarse</a>
+                </li>
+                <li><a href="/users/login" class="nav-link">
+                        <span class="glyphicon glyphicon-user"></span>Iniciar sesión</a>
+                </li>
+            {% else %}
+                <li><a class="nav-link">
+                        <span class="glyphicon glyphicon-user"></span>
+                            {{ sessionUser.email }}</a>
+                </li>
+                <li><a class="nav-link">
+                        <span class="glyphicon glyphicon-user"></span>
+                        Wallet: {{ sessionUser.wallet }}</a>
+                </li>
+                <li><a href="/users/logout" class="nav-link">
+                        <span class="glyphicon glyphicon-user"></span>Cerrar Sesión</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+<div class="container">
+    <script>
+        let params = new URLSearchParams(location.search);
+        let message = params.get("message");
+        let messageType = params.get("messageType");
+        if (message != null && message !== "") {
+            if (messageType === "") {
+                messageType = 'alert-info';
+            }
+            $(".container").append("<div class='alert " + messageType + "'>" + message + " </div>");
+        }
+    </script>
+    {% block main_container %}
+    {% endblock %}
+</div>
+</body>
 </html>

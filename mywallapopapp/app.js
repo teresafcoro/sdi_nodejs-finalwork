@@ -1,13 +1,63 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+let createError = require('http-errors');
+let express = require('express');
+let path = require('path');
+let cookieParser = require('cookie-parser');
+let logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+let app = express();
 
-var app = express();
+// Express session
+let expressSession = require('express-session');
+app.use(expressSession({secret: 'abcdefg', resave: true, saveUninitialized: true}));
+
+// Body parser
+let bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+
+// Cifrado de passwords con Crypto
+let crypto = require('crypto');
+app.set('uploadPath', __dirname)
+app.set('clave', 'abcdefg');
+app.set('crypto', crypto);
+
+// Acceso MongoDB
+const {MongoClient} = require("mongodb");
+// const url = 'mongodb+srv://admin:wqHXfPJz3vfbTsZb@mywallapopapp.jta7npq.mongodb.net/?retryWrites=true&w=majority';
+const url = 'mongodb://localhost:27017'; // local
+app.set('connectionStrings', url);
+
+// Middlewares
+const customLogger = require('./middlewares/loggerMiddleware');
+app.use("/offers/", customLogger.loggerRouter);
+
+// User Session Router
+const userSessionRouter = require('./routes/userSessionRouter');
+app.use("/offers/shop", userSessionRouter);
+app.use("/offers/add", userSessionRouter);
+app.use("/offers/myOffers", userSessionRouter);
+app.use("/offers/buy", userSessionRouter);
+app.use("/offers/purchases", userSessionRouter);
+
+// User Seller Router
+const userSellerRouter = require('./routes/userSellerRouter');
+app.use("/offers/delete", userSellerRouter);
+app.use("/offers/featured", userSellerRouter);
+
+// Rutas
+const usersRepository = require("./repositories/usersRepository.js");
+usersRepository.init(app, MongoClient);
+require("./routes/users.js")(app, usersRepository);
+
+const offersRepository = require("./repositories/offersRepository.js");
+offersRepository.init(app, MongoClient);
+require("./routes/offers.js")(app, offersRepository, usersRepository);
+
+let logsRepository = require("./repositories/logsRepository.js");
+logsRepository.init(app, MongoClient);
+require("./routes/logsRouter.js")(app, logsRepository);
+
+let indexRouter = require('./routes/index');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -20,12 +70,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-// Acceso MongoDB
-const {MongoClient} = require("mongodb");
-const url = 'mongodb+srv://admin:wqHXfPJz3vfbTsZb@mywallapopapp.jta7npq.mongodb.net/?retryWrites=true&w=majority';
-app.set('connectionStrings', url);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
