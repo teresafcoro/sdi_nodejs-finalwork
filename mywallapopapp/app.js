@@ -27,6 +27,10 @@ const {MongoClient} = require("mongodb");
 const url = 'mongodb://localhost:27017'; // local
 app.set('connectionStrings', url);
 
+// Middlewares
+const customLogger = require('./middlewares/loggerMiddleware');
+app.use("/offers/", customLogger.loggerRouter);
+
 // User Session Router
 const userSessionRouter = require('./routes/userSessionRouter');
 app.use("/offers/shop", userSessionRouter);
@@ -34,6 +38,11 @@ app.use("/offers/add", userSessionRouter);
 app.use("/offers/myOffers", userSessionRouter);
 app.use("/offers/buy", userSessionRouter);
 app.use("/offers/purchases", userSessionRouter);
+
+// User Seller Router
+const userSellerRouter = require('./routes/userSellerRouter');
+app.use("/offers/delete", userSellerRouter);
+app.use("/offers/featured", userSellerRouter);
 
 // Rutas
 const usersRepository = require("./repositories/usersRepository.js");
@@ -43,6 +52,10 @@ require("./routes/users.js")(app, usersRepository);
 const offersRepository = require("./repositories/offersRepository.js");
 offersRepository.init(app, MongoClient);
 require("./routes/offers.js")(app, offersRepository, usersRepository);
+
+let logsRepository = require("./repositories/logsRepository.js");
+logsRepository.init(app, MongoClient);
+require("./routes/logsRouter.js")(app, logsRepository);
 
 let indexRouter = require('./routes/index');
 
