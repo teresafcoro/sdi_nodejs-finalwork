@@ -1,0 +1,103 @@
+<html lang="en">
+<head>
+    <title>My Wallapop</title>
+    <meta charSet="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="/javascripts/cookie.js"></script>
+</head>
+<body>
+<!--Barra de Navegación superior -->
+<nav className="navbar navbar-inverse">
+    <div className="container-fluid">
+        <div className="navbar-header">
+            <button type="button" className="navbar-toggle" data-toggle="collapse"
+                    data-target="#myNavbar"><span
+                    className="icon-bar"></span><span className="icon-bar"></span><span
+                    className="icon-bar"></span></button>
+            <img src="/images/logo.png" alt="logo"/>
+        </div>
+        <div className="collapse navbar-collapse" id="myNavbar">
+            <ul className="nav navbar-nav" id="barra-menu">
+                <li><a id="offers" onClick="widgetOffers()">Ofertas</a></li>
+                <li><a id="convers" onClick="widgetConvers()">Conversaciones</a></li>
+            </ul>
+            <ul className="nav navbar-nav navbar-right" id="barra-menu-derecha">
+                <li>
+                    <a onClick="handleLogin()"><span
+                            className="glyphicon glyphicon-log-in"></span> Iniciar sesión</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!--Contenido -->
+<div className="container" id="main-container"><!--id para identificar --></div>
+<script>
+    let offers;
+    let seller;
+    let title;
+    let selectedId;
+    let convers;
+    let idConver = '000000000000000000000000';
+    let messages;
+    let token;
+    let URLbase = "http://localhost:8081/api/v1.0";
+    if (Cookies.get('token') != null) {
+        token = Cookies.get('token');
+        $("#main-container").load("widget-offers.html");
+        let url = new URL(window.location.href);
+        let w = url.searchParams.get("w");
+
+        if (w == "login")
+            $("#main-container").load("widget-login.html");
+        else if (w == "offers")
+            $("#main-container").load("widget-offers.html");
+        else if (w == "convers")
+            $("#main-container").load("widget-convers.html");
+        else if (w == "conversation")
+            $("#main-container").load("widget-conversation.html");
+        else
+            $("#main-container").load("widget-login.html");
+    }
+
+    function widgetOffers() {
+        window.history.pushState("", "", "/apiclient/client.html?w=offers");
+        loadAllAvailableOffers();
+        $("#main-container").load("widget-offers.html");
+    }
+
+    function widgetConvers() {
+        window.history.pushState("", "", "/apiclient/client.html?w=convers");
+        $("#main-container").load("widget-convers.html");
+    }
+
+    function handleLogout() {
+        $.ajax({
+            url: URLbase + "/logout",
+            type: "GET",
+            success: function success(response) {
+                Cookies.remove('token');
+                $("#main-container").load("widget-login.html");
+            },
+            error: function (error) {
+                Cookies.remove('token');
+                $("#widget-login").prepend("<div class='alert alert-danger'>Credenciales incorrectas. Inténtenlo de nuevo.</div>");
+
+                setTimeout(() => {
+                    $("#widget-login").find(".alert").remove();
+                }, 3000);
+            }
+        });
+        $("#main-container").load("widget-login.html");
+    }
+
+    function handleLogin() {
+        $("#main-container").load("widget-login.html");
+    }
+</script>
+</body>
+</html>
