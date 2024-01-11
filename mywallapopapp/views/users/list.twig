@@ -3,7 +3,7 @@
     <h2>Listado de Usuarios</h2>
     <div class="row">
         <div class="container mb-3">
-            <a href="/users" class="btn btn-primary" title="Recargar">Recargar</a>
+            <a href="/users/list" class="btn btn-primary" id="Recargar" title="Recargar">Recargar</a>
         </div>
         {% if users.length > 0 %}
             <form method="post" action="/users/delete">
@@ -39,7 +39,7 @@
         <ul class="pagination">
             {% for page in pages %}
                 <li class="page-item" id="pi-{{ page }}">
-                    <a class="page-link" href="/users/?page={{ page }}">{{ page }}</a>
+                    <a class="page-link" href="/users/list/?page={{ page }}">{{ page }}</a>
                 </li>
             {% endfor %}
             <script>

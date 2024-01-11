@@ -5,7 +5,7 @@ module.exports = {
     }, getConversation: async function (filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("myWallapop");
+            const database = client.db("sdi-2324-entrega2-505");
             const collectionName = 'conversations';
             const conversationsCollection = database.collection(collectionName);
             return await conversationsCollection.findOne(filter, options);
@@ -15,7 +15,7 @@ module.exports = {
     }, getConversations: async function (filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("myWallapop");
+            const database = client.db("sdi-2324-entrega2-505");
             const collectionName = 'conversations';
             const conversationsCollection = database.collection(collectionName);
             return await conversationsCollection.find(filter, options).toArray();
@@ -28,7 +28,7 @@ module.exports = {
                 if (err) {
                     callbackFunction(null)
                 } else {
-                    const database = client.db("myWallapop");
+                    const database = client.db("sdi-2324-entrega2-505");
                     const collectionName = 'conversations';
                     const conversationsCollection = database.collection(collectionName);
                     conversationsCollection.insertOne(conv)
@@ -43,7 +43,7 @@ module.exports = {
     }, deleteConversation: async function (filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("myWallapop");
+            const database = client.db("sdi-2324-entrega2-505");
             const collectionName = 'conversations';
             const conversationsCollection = database.collection(collectionName);
             const result = await conversationsCollection.deleteOne(filter, options);

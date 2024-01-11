@@ -1,8 +1,10 @@
+const {generateLogContent} = require("../middlewares/loggerMiddleware");
 module.exports = function (app, usersRepository) {
     /**
      * Renderizado a la vista de registro de usuario
      */
     app.get('/users/signup', function (req, res) {
+        generateLogContent(req, res);
         res.render('users/signup.twig');
     });
     /**
@@ -29,7 +31,7 @@ module.exports = function (app, usersRepository) {
             usersRepository.getUser({email: email}, {}).then(dbUser => {
                 if (dbUser === null) {
                     usersRepository.insertUser(user).then(user => {
-                        req.session.user = user.email;
+                        req.session.user = user;
                         res.render('offers/myOffers.twig', {sessionUser: req.session.user});
                     });
                 } else {
@@ -48,6 +50,7 @@ module.exports = function (app, usersRepository) {
      * Renderizado a la vista de inicio de sesión
      */
     app.get('/users/login', function (req, res) {
+        generateLogContent(req, res);
         res.render("users/login.twig");
     });
     /**
@@ -63,10 +66,12 @@ module.exports = function (app, usersRepository) {
         usersRepository.getUser(filter, {}).then(user => {
             if (user == null) {
                 req.session.user = null;
+                generateLogContent(req, res);
                 res.redirect("/users/login"
                     + "?message=Email o contraseña incorrecta" + "&messageType=alert-danger");
             } else {
                 req.session.user = user;
+                generateLogContent(req, res);
                 if (user.kind === 'Administrador')
                     res.render('users/list.twig', {sessionUser: req.session.user});
                 else
@@ -82,13 +87,15 @@ module.exports = function (app, usersRepository) {
      * Cierre de sesión
      */
     app.get('/users/logout', function (req, res) {
+        generateLogContent(req, res);
         req.session.user = null;
         res.render('users/login.twig', {sessionUser: req.session.user});
     });
     /**
      * Listado de usuarios del sistema
      */
-    app.get('/users', function (req, res) {
+    app.get('/users/list', function (req, res) {
+        generateLogContent(req, res);
         let page = parseInt(req.query.page);
         if (typeof req.query.page === "undefined" || req.query.page === null || req.query.page === "0")
             page = 1;
@@ -110,7 +117,7 @@ module.exports = function (app, usersRepository) {
             };
             res.render('users/list.twig', response);
         }).catch(() => {
-            res.redirect("/users" +
+            res.redirect("/users/list" +
                 "?message=No se pudieron listar los usuarios" + "&messageType=alert-danger");
         });
     });
@@ -123,14 +130,14 @@ module.exports = function (app, usersRepository) {
         let filter = {email: {$in: usersEmails}};
         usersRepository.deleteUsers(filter, {}).then(result => {
             if (result === null || result.deletedCount === 0) {
-                res.redirect("/users"
+                res.redirect("/users/list"
                     + "?message=No se ha podido realizar el borrado" + "&messageType=alert-danger");
             } else {
-                res.redirect("/users"
+                res.redirect("/users/list"
                     + "?message=Borrado realizado correctamente" + "&messageType=alert-info");
             }
         }).catch(() => {
-            res.redirect("/users"
+            res.redirect("/users/list"
                 + "?message=No se ha podido realizar el borrado" + "&messageType=alert-danger");
         });
     });

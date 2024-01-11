@@ -164,23 +164,6 @@ module.exports = function (app, usersRepository, offersRepository, conversations
         }
     });
     /**
-     * Obtener los mensajes de una conversación
-     */
-    app.get('/api/v1.0/messages/:id', function (req, res) {
-        try {
-            let filter = {idConversation: ObjectId(req.params.id)};
-            messagesRepository.getMessages(filter, {}).then(messages => {
-                res.status(200);
-                res.send({messages: messages});
-            }).catch(error => {
-                res.status(500);
-                res.json({error: "Se ha producido un error al recuperar las ofertas."});
-            });
-        } catch (error) {
-            console.log("error", error);
-        }
-    });
-    /**
      * Obtener el listado de conversaciones
      */
     app.get('/api/v1.0/conversations', function (req, res) {
@@ -205,6 +188,23 @@ module.exports = function (app, usersRepository, offersRepository, conversations
             });
         } catch (error) {
             console.log("Se ha producido un error al recuperar las conversaciones: " + error);
+        }
+    });
+    /**
+     * Obtener los mensajes de una conversación
+     */
+    app.get('/api/v1.0/messages/:id', function (req, res) {
+        try {
+            let filter = {idConversation: ObjectId(req.params.id)};
+            messagesRepository.getMessages(filter, {}).then(messages => {
+                res.status(200);
+                res.send({messages: messages});
+            }).catch(error => {
+                res.status(500);
+                res.json({error: "Se ha producido un error al recuperar las ofertas."});
+            });
+        } catch (error) {
+            console.log("error", error);
         }
     });
     /**

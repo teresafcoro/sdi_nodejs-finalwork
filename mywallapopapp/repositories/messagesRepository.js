@@ -5,7 +5,7 @@ module.exports = {
     }, getMessages: async function (filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("myWallapop");
+            const database = client.db("sdi-2324-entrega2-505");
             const collectionName = 'messages';
             const messagesCollection = database.collection(collectionName);
             return await messagesCollection.find(filter, options).toArray();
@@ -18,7 +18,7 @@ module.exports = {
                 if (err) {
                     callbackFunction(null)
                 } else {
-                    const database = dbClient.db("myWallapop");
+                    const database = client.db("sdi-2324-entrega2-505");
                     const collectionName = 'messages';
                     const messagesCollection = database.collection(collectionName);
                     messagesCollection.insertOne(message)
@@ -33,7 +33,7 @@ module.exports = {
     }, markAsReadMessage: async function (filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("myWallapop");
+            const database = client.db("sdi-2324-entrega2-505");
             const collectionName = 'messages';
             const messagesCollection = database.collection(collectionName);
             const updateObj = {$set: {isReaded: true}};
@@ -44,7 +44,7 @@ module.exports = {
         }
     }, deleteMessage: async function (offerId, callback) {
         const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-        const database = client.db("myWallapop");
+        const database = client.db("sdi-2324-entrega2-505");
         const offerCollection = database.collection('messages');
         await offerCollection.deleteOne({_id: offerId}).then((result) => {
             callback(result.deletedCount === 1);

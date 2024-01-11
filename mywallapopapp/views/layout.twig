@@ -48,8 +48,19 @@
                        data-toggle="dropdown" aria-expanded="false"> Gestión de usuarios</a>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="navbarDropdown"
                         id="gestionUsuariosDropdown">
-                        <li><a class="dropdown-item" id="listUsers" href="/users">Listado de usuarios</a>
+                        <li><a class="dropdown-item" id="listUsers" href="/users/list">Listado de usuarios</a>
                         </li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="gestionLogsMenu" role="button"
+                       data-toggle="dropdown" aria-expanded="false">Gestión de logs</a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="navbarDropdown"
+                        id="gestionLogsDropdown">
+                        <li><a class="dropdown-item" id="listAllLogs"
+                               href="/admin">Visualizar logs</a></li>
+                        <li><a class="dropdown-item" id="removeAllLogs"
+                               href="/logs/delete/all">Borrar logs</a></li>
                     </ul>
                 </li>
             {% endif %}
@@ -67,7 +78,7 @@
                         <span class="glyphicon glyphicon-user"></span>
                             {{ sessionUser.email }}</a>
                 </li>
-                <li><a class="nav-link">
+                <li><a class="nav-link" id="wallet">
                         <span class="glyphicon glyphicon-user"></span>
                         Wallet: {{ sessionUser.wallet }}</a>
                 </li>

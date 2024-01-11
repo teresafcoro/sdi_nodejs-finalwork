@@ -5,7 +5,7 @@ module.exports = {
     }, getUser: async function (filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("myWallapop");
+            const database = client.db("sdi-2324-entrega2-505");
             const collectionName = 'users';
             const usersCollection = database.collection(collectionName);
             return await usersCollection.findOne(filter, options);
@@ -15,7 +15,7 @@ module.exports = {
     }, insertUser: async function (user) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("myWallapop");
+            const database = client.db("sdi-2324-entrega2-505");
             const collectionName = 'users';
             const usersCollection = database.collection(collectionName);
             return await usersCollection.insertOne(user);
@@ -26,7 +26,7 @@ module.exports = {
         try {
             const limit = 4;
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("myWallapop");
+            const database = client.db("sdi-2324-entrega2-505");
             const collectionName = 'users';
             const usersCollection = database.collection(collectionName);
             const usersCollectionCount = await usersCollection.count();
@@ -39,7 +39,7 @@ module.exports = {
     }, deleteUsers: async function (filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("myWallapop");
+            const database = client.db("sdi-2324-entrega2-505");
             const collectionName = 'users';
             const usersCollection = database.collection(collectionName);
             return await usersCollection.deleteMany(filter, options);
@@ -49,7 +49,7 @@ module.exports = {
     }, updateUser: async function (user, filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("myWallapop");
+            const database = client.db("sdi-2324-entrega2-505");
             const collectionName = 'users';
             const usersCollection = database.collection(collectionName);
             return await usersCollection.updateOne(filter, {$set: user}, options);

@@ -14,10 +14,7 @@
     </table>
 </div>
 
-
 <script>
-
-
     window.history.pushState("", "", "/apiclient/client.html?w=convers");
 
     loadAllConvers();
@@ -38,7 +35,6 @@
 
             },
             error: function (error) {
-                // TODO: Mostrar mensaje de error
                 //console.error("Error al cargar las ofertas. ", error);
                 $("#main-container").load("widget-login.html");
             }
