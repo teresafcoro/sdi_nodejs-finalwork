@@ -1,0 +1,32 @@
+package com.uniovi.sdi2324entrega2test.n.pageobjects;
+
+import com.uniovi.sdi2324entrega2test.n.util.SeleniumUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+import java.util.List;
+import java.util.Objects;
+
+public class PO_HomeView extends PO_NavView {
+
+    static public void checkWelcomeToPage(WebDriver driver, String kind) {
+        if (Objects.equals(kind, "standard"))
+            SeleniumUtils.waitLoadElementsBy(driver, "text", "Mis ofertas",
+                    getTimeout());
+        else
+            SeleniumUtils.waitLoadElementsBy(driver, "text", "Listado de Usuarios",
+                    getTimeout());
+    }
+
+    static public List<WebElement> getWelcomeMessageText(WebDriver driver, int language) {
+        //Esperamos a que se cargue el saludo de bienvenida en Español
+        return SeleniumUtils.waitLoadElementsBy(driver, "text", p.getString("welcome.message", language),
+                getTimeout());
+    }
+
+    public static String getTitleMessage(WebDriver driver) {
+        return driver.findElement(By.name("title")).getText();
+    }
+
+}
