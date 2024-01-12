@@ -7,6 +7,17 @@ import org.openqa.selenium.WebElement;
 
 public class PO_SignUpView extends PO_NavView {
 
+    /**
+     * Rellena el formulario de registro de un nuevo usuario
+     *
+     * @param driver        WebDriver
+     * @param emailp        String
+     * @param namep         String
+     * @param surnamep      String
+     * @param datep         String
+     * @param passwordp     String
+     * @param passwordconfp String
+     */
     static public void fillForm(WebDriver driver, String emailp, String namep, String surnamep,
                                 String datep, String passwordp, String passwordconfp) {
         WebElement email = driver.findElement(By.name("email"));
@@ -36,6 +47,11 @@ public class PO_SignUpView extends PO_NavView {
         driver.findElement(boton).click();
     }
 
+    /**
+     * Comprueba si nos encontramos en la página del registro de un usuario
+     *
+     * @param driver WebDriver
+     */
     static public void checkSignUpPage(WebDriver driver) {
         if (driver.findElements(By.xpath("//*[contains(text(),'Registrar usuario')]")).size() > 0) {
             Assertions.assertTrue(true);

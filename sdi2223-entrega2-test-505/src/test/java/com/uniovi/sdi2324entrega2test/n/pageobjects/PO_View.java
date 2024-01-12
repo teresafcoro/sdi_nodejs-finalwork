@@ -1,8 +1,5 @@
 package com.uniovi.sdi2324entrega2test.n.pageobjects;
 
-import java.util.List;
-
-import com.uniovi.sdi2324entrega2test.n.util.SeleniumUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -16,46 +13,10 @@ public class PO_View {
         return timeout;
     }
 
-    public static void setTimeout(int timeout) {
-        PO_View.timeout = timeout;
-    }
-
-    public static PO_Properties getP() {
-        return p;
-    }
-
-    public static void setP(PO_Properties p) {
-        PO_View.p = p;
-    }
-
-    /**
-     * Espera por la visibilidad de un texto correspondiente a la propiedad key en el idioma locale en la vista actualmente cargandose en driver..
-     *
-     * @param driver: apuntando al navegador abierto actualmente.
-     * @param key:    clave del archivo de propiedades.
-     * @param locale: Retorna el índice correspondient al idioma. 0 p.SPANISH y 1 p.ENGLISH.
-     * @return Se retornará la lista de elementos resultantes de la búsqueda.
-     */
-    static public List<WebElement> checkElementByKey(WebDriver driver, String key, int locale) {
-        return SeleniumUtils.waitLoadElementsBy(driver, "text", p.getString(key, locale), getTimeout());
-    }
-
-    /**
-     * Espera por la visibilidad de un elemento/s en la vista actualmente cargandose en driver..
-     *
-     * @param driver: apuntando al navegador abierto actualmente.
-     * @param type:
-     * @param text:
-     * @return Se retornará la lista de elementos resultantes de la búsqueda.
-     */
-    static public List<WebElement> checkElementBy(WebDriver driver, String type, String text) {
-        return SeleniumUtils.waitLoadElementsBy(driver, type, text, getTimeout());
-    }
-
     /**
      * Realiza un click en un botón que contenga el texto text
      *
-     * @param driver
+     * @param driver      WebDriver
      * @param buttonXPath Texto del botón
      */
     static public void clickOnButton(WebDriver driver, String buttonXPath) {
@@ -66,10 +27,11 @@ public class PO_View {
     /**
      * Comprueba que se muestra un mensaje de error con el texto <code>message</code>
      *
-     * @param driver
+     * @param driver  WebDriver
      * @param message Texto del mensaje de error
      */
     static public void checkErrorMessageIsShown(WebDriver driver, String message) {
         driver.findElement(By.xpath("//*[contains(text(),'" + message + "')]"));
     }
+
 }

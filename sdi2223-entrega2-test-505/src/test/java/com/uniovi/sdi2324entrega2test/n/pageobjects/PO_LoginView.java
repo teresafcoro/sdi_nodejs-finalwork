@@ -7,24 +7,13 @@ import org.openqa.selenium.WebElement;
 
 public class PO_LoginView extends PO_NavView {
 
-    static String LOGIN_BUTTON_TEXT = "Aceptar";
-
-    static public void fillForm(WebDriver driver, String emailp, String passwordp) {
-        WebElement email = driver.findElement(By.name("email"));
-        email.click();
-        email.clear();
-        email.sendKeys(emailp);
-
-        WebElement password = driver.findElement(By.name("password"));
-        password.click();
-        password.clear();
-        password.sendKeys(passwordp);
-
-        //Pulsar el boton de Alta.
-        By boton = By.className("btn");
-        driver.findElement(boton).click();
-    }
-
+    /**
+     * Rellena el formulario de inicio de sesión
+     *
+     * @param driver    WebDriver
+     * @param emailp    String
+     * @param passwordp String
+     */
     static public void fillLoginForm(WebDriver driver, String emailp, String passwordp) {
         WebElement email = driver.findElement(By.name("email"));
         email.click();
@@ -39,6 +28,13 @@ public class PO_LoginView extends PO_NavView {
         driver.findElement(boton).click();
     }
 
+    /**
+     * Rellena el formulario de inicio de sesión para la API
+     *
+     * @param driver    WebDriver
+     * @param emailp    String
+     * @param passwordp String
+     */
     public static void fillLoginFormApi(WebDriver driver, String emailp, String passwordp) {
         WebElement email = driver.findElement(By.name("email"));
         email.click();
@@ -53,28 +49,26 @@ public class PO_LoginView extends PO_NavView {
         driver.findElement(boton).click();
     }
 
+    /**
+     * Comprueba que nos encontramos en la página de inicio de sesión
+     *
+     * @param driver WebDriver
+     */
     static public void checkLoginPage(WebDriver driver) {
-        //Esperamos a que se cargue el saludo de bienvenida en Español
+        // Esperamos a que se cargue el saludo de bienvenida en Español
         SeleniumUtils.waitLoadElementsBy(driver, "text", "Identificar usuario",
                 getTimeout());
     }
 
     /**
-     * Simula el proceso de cerrar sesión de un usuario.
-     * targetText es el texto que debería ver después de hacer click en la opción escogida, en este caso logout
+     * Inicio de sesión con los datos de un usuario
      *
-     * @param driver
+     * @param driver    WebDriver
+     * @param emailp    String
+     * @param passwordp String
      */
-    static public void logout(WebDriver driver) {
-        PO_NavView.clickOption(driver, "logout", "text", "Cerrar Sesión");
+    static public void login(WebDriver driver, String emailp, String passwordp) {
+        fillLoginForm(driver, emailp, passwordp);
     }
 
-    /**
-     * Acción de rellenar el formulario de login con credenciales válidas
-     * y enviarlo.
-     */
-    static public void simulateLogin(WebDriver driver, String emailp, String passwordp) {
-        fillForm(driver, emailp, passwordp);
-//        PO_View.checkElementBy(driver, "text", LOGIN_BUTTON_TEXT);
-    }
 }

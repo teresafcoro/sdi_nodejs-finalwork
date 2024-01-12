@@ -39,9 +39,8 @@ class Sdi2324Entrega2TestApplicationTests {
     // Antes de la primera prueba
     @BeforeAll
     static public void begin() {
-        // Crear los usuarios de prueba
         driver.navigate().to(URL);
-        DatabaseUtils.seedUsers();
+        DatabaseUtils.seedUsers(); // Crear los usuarios de prueba
     }
 
     // Al finalizar la última prueba
@@ -61,7 +60,7 @@ class Sdi2324Entrega2TestApplicationTests {
     void PR01() {
         DatabaseUtils.resetUsersCollection();
         // Nos movemos al formulario de registro
-        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+        PO_NavView.clickSignup(driver);
         // Cumplimentamos el registro con datos VALIDOS
         PO_SignUpView.fillForm(driver, "user01@email.com", "User01", "User01", "2003-05-22", "user01", "user01");
         // Comprobamos que hemos ido a la pagina de "MyOffers"
@@ -76,7 +75,7 @@ class Sdi2324Entrega2TestApplicationTests {
     void PR02() {
         DatabaseUtils.resetUsersCollection();
         // Nos movemos al formulario de registro
-        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+        PO_NavView.clickSignup(driver);
         // Cumplimentamos el registro con datos INVALIDOS
         PO_SignUpView.fillForm(driver, "", "", "", "", "77777", "77777");
         // Comprobamos que seguimos en la pantalla de registro
@@ -89,7 +88,7 @@ class Sdi2324Entrega2TestApplicationTests {
     void PR03() {
         DatabaseUtils.resetUsersCollection();
         // Nos movemos al formulario de registro
-        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+        PO_NavView.clickSignup(driver);
         // Cumplimentamos el registro con datos INVALIDOS
         PO_SignUpView.fillForm(driver, "user01@email.com", "User01", "User01", "2003-05-22", "user01", "user011");
         // Comprobamos que seguimos en la pantalla de registro
@@ -103,7 +102,7 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetUsersCollection();
         DatabaseUtils.seedUsers();
         // Nos movemos al formulario de registro
-        PO_HomeView.clickOption(driver, "signup", "class", "btn btn-primary");
+        PO_NavView.clickSignup(driver);
         // Cumplimentamos el registro con datos INVALIDOS
         PO_SignUpView.fillForm(driver, "user01@email.com", "User01", "User01", "2003-05-22", "user01", "user01");
         // Comprobamos que seguimos en la pantalla de registro
@@ -117,7 +116,7 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetUsersCollection();
         DatabaseUtils.seedUsers();
         // Nos movemos al formulario de inicio de sesión
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         // Rellenamos con datos validos del usuario administrador
         PO_LoginView.fillLoginForm(driver, "admin@email.com", "admin");
         // Comprobamos que hemos ido a la pagina de home, confirmando que el inicio de sesión se ha completado con exito
@@ -131,7 +130,7 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetUsersCollection();
         DatabaseUtils.seedUsers();
         // Nos movemos al formulario de inicio de sesión
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         // Rellenamos con datos validos del usuario estandar
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Comprobamos que hemos ido a la pagina de home, confirmando que el inicio de sesión se ha completado con exito
@@ -145,8 +144,11 @@ class Sdi2324Entrega2TestApplicationTests {
     void PR07() {
         DatabaseUtils.resetUsersCollection();
         DatabaseUtils.seedUsers();
-        // Insertar contraseña incorrecta
-        SeleniumUtils.logInIntoAccount(driver, "STANDARD", "user01@email.com", "123");
+        // Nos movemos al formulario de inicio de sesión
+        PO_NavView.clickLogin(driver);
+        // Rellenamos con datos validos del usuario estandar
+        PO_LoginView.fillLoginForm(driver, "user01@email.com", "123");
+        // Comprobamos que no permite iniciar sesión al usuario
         PO_LoginView.checkLoginPage(driver);
     }
 
@@ -156,8 +158,11 @@ class Sdi2324Entrega2TestApplicationTests {
     void PR08() {
         DatabaseUtils.resetUsersCollection();
         DatabaseUtils.seedUsers();
-        // Insertar contraseña incorrecta
-        SeleniumUtils.logInIntoAccount(driver, "STANDARD", "", "user01");
+        // Nos movemos al formulario de inicio de sesión
+        PO_NavView.clickLogin(driver);
+        // Rellenamos con datos validos del usuario estandar
+        PO_LoginView.fillLoginForm(driver, "", "user01");
+        // Comprobamos que no permite iniciar sesión al usuario
         PO_LoginView.checkLoginPage(driver);
     }
 
@@ -169,13 +174,13 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetUsersCollection();
         DatabaseUtils.seedUsers();
         // Nos movemos al formulario de inicio de sesión
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         // Rellenamos con datos validos del usuario estandar
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Comprobamos que hemos ido a la pagina de home, confirmando que el inicio de sesión se ha completado con exito
         PO_HomeView.checkWelcomeToPage(driver, "standard");
         // Nos movemos al formulario de inicio de sesión, cerrando la sesión actual
-        PO_HomeView.clickOption(driver, "logout", "class", "btn btn-primary");
+        PO_NavView.clickLogout(driver);
         // Comprobamos que estamos en la pantalla de inicio de sesión
         PO_LoginView.checkLoginPage(driver);
     }
@@ -198,24 +203,24 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetUsersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión como administrador
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-        PO_LoginView.fillForm(driver, "admin@email.com", "admin");
+        PO_NavView.clickLogin(driver);
+        PO_LoginView.fillLoginForm(driver, "admin@email.com", "admin");
         // Comprobar que se muestran todos los usuarios
         // Consultar primera pagina
         driver.findElement(By.id("Recargar")).click(); // Recargar tabla de usuarios
-        List<WebElement> firstPageUsers = PO_UserListView.getUsersList(driver);
+        List<WebElement> firstPageUsers = PO_UsersListView.getUsersList(driver);
         Assertions.assertEquals(firstPageUsers.size(), 4);
         // Consultar segunda pagina
         driver.findElement(By.id("pi-2")).click();
-        List<WebElement> secondPageUsers = PO_UserListView.getUsersList(driver);
+        List<WebElement> secondPageUsers = PO_UsersListView.getUsersList(driver);
         Assertions.assertEquals(4, secondPageUsers.size());
         // Consultar tercera pagina
         driver.findElement(By.id("pi-3")).click();
-        List<WebElement> thirdPageUsers = PO_UserListView.getUsersList(driver);
+        List<WebElement> thirdPageUsers = PO_UsersListView.getUsersList(driver);
         Assertions.assertEquals(4, thirdPageUsers.size());
         // Consultar cuarta pagina
         driver.findElement(By.id("pi-4")).click();
-        List<WebElement> fourthPageUsers = PO_UserListView.getUsersList(driver);
+        List<WebElement> fourthPageUsers = PO_UsersListView.getUsersList(driver);
         Assertions.assertEquals(3, fourthPageUsers.size());
     }
 
@@ -227,21 +232,21 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetUsersCollection();
         DatabaseUtils.seedUsers();
         // Nos movemos al formulario de inicio de sesion
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         // Cumplimentamos el registro con datos VALIDOS (Admin)
-        PO_LoginView.fillForm(driver, "admin@email.com", "admin");
+        PO_LoginView.fillLoginForm(driver, "admin@email.com", "admin");
         PO_HomeView.checkWelcomeToPage(driver, "admin");
         // Sacamos la lista de usuarios que hay
         driver.findElement(By.id("Recargar")).click(); // Recargar tabla de usuarios
-        List<WebElement> usersList = PO_UserListView.getUsersList(driver);
+        List<WebElement> usersList = PO_UsersListView.getUsersList(driver);
         // Seleccionamos el checkbox del primer usuario
-        PO_UserListView.markCheckBoxUser(driver);
+        PO_UsersListView.markCheckBoxUser(driver);
         // Borramos dandole al boton
-        PO_UserListView.clickDeleteButton(driver);
+        PO_UsersListView.clickDeleteButton(driver);
         // Comprobamos que en la última página hay un usuario menos
         driver.findElement(By.id("pi-2")).click();
         driver.findElement(By.id("pi-4")).click();
-        List<WebElement> fourthPageUsers = PO_UserListView.getUsersList(driver);
+        List<WebElement> fourthPageUsers = PO_UsersListView.getUsersList(driver);
         Assertions.assertEquals(2, fourthPageUsers.size());
     }
 
@@ -253,23 +258,23 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetUsersCollection();
         DatabaseUtils.seedUsers();
         // Nos movemos al formulario de inicio de sesion
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         // Cumplimentamos el registro con datos VALIDOS
-        PO_LoginView.fillForm(driver, "admin@email.com", "admin");
+        PO_LoginView.fillLoginForm(driver, "admin@email.com", "admin");
         PO_HomeView.checkWelcomeToPage(driver, "admin");
         // Sacamos la lista de usuarios
         driver.findElement(By.id("Recargar")).click(); // Recargar tabla de usuarios
-        List<WebElement> usersList = PO_UserListView.getUsersList(driver);
+        List<WebElement> usersList = PO_UsersListView.getUsersList(driver);
         // Seleccionamos el checkbox del último usuario
         driver.findElement(By.id("pi-2")).click();
         driver.findElement(By.id("pi-4")).click();
-        PO_UserListView.markCheckBoxUser(driver);
+        PO_UsersListView.markCheckBoxUser(driver);
         // Borramos el usuario
-        PO_UserListView.clickDeleteButton(driver);
+        PO_UsersListView.clickDeleteButton(driver);
         // Comprobamos que en la última página hay un usuario menos
         driver.findElement(By.id("pi-2")).click();
         driver.findElement(By.id("pi-4")).click();
-        List<WebElement> fourthPageUsers = PO_UserListView.getUsersList(driver);
+        List<WebElement> fourthPageUsers = PO_UsersListView.getUsersList(driver);
         Assertions.assertEquals(2, fourthPageUsers.size());
     }
 
@@ -281,25 +286,25 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetUsersCollection();
         DatabaseUtils.seedUsers();
         // Nos movemos al formulario de inicio de sesion
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         // Cumplimentamos el registro con datos VALIDOS
-        PO_LoginView.fillForm(driver, "admin@email.com", "admin");
+        PO_LoginView.fillLoginForm(driver, "admin@email.com", "admin");
         PO_HomeView.checkWelcomeToPage(driver, "admin");
         // Sacamos la lista de usuarios que hay
         driver.findElement(By.id("Recargar")).click(); // Recargar tabla de usuarios
-        List<WebElement> usersList = PO_UserListView.getUsersList(driver);
+        List<WebElement> usersList = PO_UsersListView.getUsersList(driver);
         // Sacamos los tres primeros usuarios y marcamos de sus checkboxes
         WebElement u1 = usersList.get(0);
         WebElement u2 = usersList.get(1);
         WebElement u3 = usersList.get(2);
-        PO_UserListView.markCheckBoxUser(driver);
-        PO_UserListView.markCheckBoxUser(driver);
-        PO_UserListView.markCheckBoxUser(driver);
+        PO_UsersListView.markCheckBoxUser(driver);
+        PO_UsersListView.markCheckBoxUser(driver);
+        PO_UsersListView.markCheckBoxUser(driver);
         // Borramos dandole al boton
-        PO_UserListView.clickDeleteButton(driver);
+        PO_UsersListView.clickDeleteButton(driver);
         // Comprobamos que en la última página, ahora la 3, hay 4 usuarios
         driver.findElement(By.id("pi-3")).click();
-        List<WebElement> fourthPageUsers = PO_UserListView.getUsersList(driver);
+        List<WebElement> fourthPageUsers = PO_UsersListView.getUsersList(driver);
         Assertions.assertEquals(4, fourthPageUsers.size());
     }
 
@@ -311,12 +316,12 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetUsersCollection();
         DatabaseUtils.seedUsers();
         // Nos movemos al formulario de inicio de sesion
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         // Cumplimentamos el registro con datos VALIDOS
-        PO_LoginView.fillForm(driver, "admin@email.com", "admin");
+        PO_LoginView.fillLoginForm(driver, "admin@email.com", "admin");
         PO_HomeView.checkWelcomeToPage(driver, "admin");
         // Buscamos el usuario administrador y comprobamos que no aparece en la lista
-        Assertions.assertFalse(PO_UserListView.findUserInList(driver, "admin@email.com"));
+        Assertions.assertFalse(PO_UsersListView.findUserInList(driver, "admin@email.com"));
     }
 
     // [Prueba16] Ir al formulario de alta de oferta, rellenarla con datos válidos
@@ -328,13 +333,13 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetUsersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Añadir una oferta como usuario estándar
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta1", "Descripcion de la oferta1", "10");
+        PO_MyOffersView.addNewOffer(driver, "Oferta1", "Descripcion de la oferta1", "10");
         // Comprobar que la oferta aparece en el listado de ofertas del usuario
         driver.findElement(By.id("Recargar")).click(); // Recargar tabla de mis ofertas
-        PO_OfferView.checkAddOffer(driver, "Oferta1");
+        PO_MyOffersView.checkAddOffer(driver, "Oferta1");
     }
 
     // [Prueba17] Ir al formulario de alta de oferta, rellenarla con datos inválidos
@@ -346,10 +351,10 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Añadir una oferta introduciendo datos inválidos. Precio negativo
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba", "Descripcion de la oferta de prueba", "-1");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba", "Descripcion de la oferta de prueba", "-1");
         // Comprobar que se muestra el mensaje de campo inválido. En este caso,
         // el campo precio debe ser mayor que 0.
         PO_View.checkErrorMessageIsShown(driver, "Datos incorrectos");
@@ -363,13 +368,13 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Añadir dos ofertas de prueba
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "10");
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "10");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
         driver.findElement(By.id("Recargar")).click(); // Recargar tabla de mis ofertas
-        PO_OfferView.checkMyOfferListingContainsOffers(driver, 2);
+        PO_MyOffersView.checkMyOfferListingContainsOffers(driver, 2);
     }
 
     // [Prueba19] Ir a la lista de ofertas, borrar la primera oferta de la lista,
@@ -380,20 +385,20 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Añadir dos ofertas de prueba
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "10");
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 3", "Descripcion de la oferta de prueba 3", "5");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "10");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 3", "Descripcion de la oferta de prueba 3", "5");
         // Obtener la primera oferta de la lista y borrarla
         driver.findElement(By.id("Recargar")).click(); // Recargar tabla de mis ofertas
-        PO_OfferView.deleteOfferFromUserOffersList(driver, 1);
+        PO_MyOffersView.deleteOfferFromUserOffersList(driver, 1);
         // Comprobar que la oferta desaparece. Para ello, comprobar que no
         // aparece el título de la oferta en la lista de ofertas.
         driver.findElement(By.id("Recargar")).click(); // Recargar tabla de mis ofertas
-        PO_OfferView.checkOfferNotAppearOnList(driver, 1, "Oferta de prueba 1");
-        PO_OfferView.checkOfferNotAppearOnList(driver, 2, "Oferta de prueba 1");
+        PO_MyOffersView.checkOfferNotAppearOnList(driver, 1, "Oferta de prueba 1");
+        PO_MyOffersView.checkOfferNotAppearOnList(driver, 2, "Oferta de prueba 1");
     }
 
     // [Prueba20] Ir a la lista de ofertas, borrar la última oferta de la lista,
@@ -404,20 +409,20 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Añadir dos ofertas de prueba
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "10");
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 3", "Descripcion de la oferta de prueba 3", "5");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "10");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 3", "Descripcion de la oferta de prueba 3", "5");
         // Obtener la primera oferta de la lista y borrarla
         driver.findElement(By.id("Recargar")).click(); // Recargar tabla de mis ofertas
-        PO_OfferView.deleteOfferFromUserOffersList(driver, 3);
+        PO_MyOffersView.deleteOfferFromUserOffersList(driver, 3);
         // Comprobar que la oferta desaparece. Para ello, comprobar que no
         // aparece el título de la oferta en la lista de ofertas.
         driver.findElement(By.id("Recargar")).click(); // Recargar tabla de mis ofertas
-        PO_OfferView.checkOfferNotAppearOnList(driver, 1, "Oferta de prueba 3");
-        PO_OfferView.checkOfferNotAppearOnList(driver, 2, "Oferta de prueba 3");
+        PO_MyOffersView.checkOfferNotAppearOnList(driver, 1, "Oferta de prueba 3");
+        PO_MyOffersView.checkOfferNotAppearOnList(driver, 2, "Oferta de prueba 3");
     }
 
     // [Prueba21] Ir a la lista de ofertas, borrar una oferta de otro usuario,
@@ -428,17 +433,17 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Añadir dos ofertas de prueba
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "10");
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "10");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
         // Comprobamos que se muestran solo las ofertas del usuario en sesión
         // No se puede eliminar una oferta de otro usuario, por tanto
         driver.findElement(By.id("Recargar")).click(); // Recargar tabla de mis ofertas
-        PO_OfferView.checkOfferAppearOnList(driver, 1, "Oferta de prueba 1");
-        PO_OfferView.checkOfferAppearOnList(driver, 2, "Oferta de prueba 2");
-        PO_OfferView.checkOfferListingContainsOffers(driver, 2);
+        PO_MyOffersView.checkOfferAppearOnList(driver, 1, "Oferta de prueba 1");
+        PO_MyOffersView.checkOfferAppearOnList(driver, 2, "Oferta de prueba 2");
+        PO_ShopView.checkOfferListingContainsOffers(driver, 2);
     }
 
     // [Prueba22] Ir a la lista de ofertas, borrar una oferta propia que ha sido vendida,
@@ -449,22 +454,22 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Añadir oferta de prueba
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1");
         // Iniciar sesión con otro usuario
-        PO_HomeView.clickOption(driver, "logout", "class", "btn btn-primary");
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogout(driver);
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user04@email.com", "user04");
         PO_NavView.selectDropdownById(driver, "gestionOfertasMenu", "gestionOfertasDropdown", "listOffers");
-        PO_OfferView.buyOfferFromAllAvailableOfferList(driver, 1);
+        PO_ShopView.buyOfferFromAllAvailableOfferList(driver, 1);
         // Iniciar sesión con el usuario anterior
-        PO_HomeView.clickOption(driver, "logout", "class", "btn btn-primary");
+        PO_NavView.clickLogout(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Comprobar que la oferta está vendida y no se puede eliminar
         driver.findElement(By.id("Recargar")).click(); // Recargar tabla de mis ofertas
-        PO_OfferView.deleteOfferFromUserOffersList(driver, 1);
+        PO_MyOffersView.deleteOfferFromUserOffersList(driver, 1);
         PO_View.checkErrorMessageIsShown(driver, "Oferta vendida, no se puede eliminar");
     }
 
@@ -476,16 +481,16 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Añadir dos ofertas de prueba
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "10");
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "10");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
         // Buscar una oferta
         PO_NavView.selectDropdownById(driver, "gestionOfertasMenu", "gestionOfertasDropdown", "listOffers");
-        PO_OfferView.searchOfferFromAllOfferList(driver, "");
+        PO_ShopView.searchOfferFromAllOfferList(driver, "");
         // Comprobar que aparecen ofertas
-        PO_OfferView.checkOfferListingContainsOffers(driver, 2);
+        PO_ShopView.checkOfferListingContainsOffers(driver, 2);
     }
 
     // [Prueba24] Hacer una búsqueda escribiendo en el campo un texto que no exista y
@@ -496,16 +501,16 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Añadir dos ofertas de prueba
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "10");
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "10");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
         // Buscar una oferta
         PO_NavView.selectDropdownById(driver, "gestionOfertasMenu", "gestionOfertasDropdown", "listOffers");
-        PO_OfferView.searchOfferFromAllOfferList(driver, "XX");
+        PO_ShopView.searchOfferFromAllOfferList(driver, "XX");
         // Comprobar que no aparecen ofertas
-        Assertions.assertTrue(PO_OfferView.checkListIsEmpty(driver));
+        Assertions.assertTrue(PO_MyOffersView.checkListIsEmpty(driver));
     }
 
     // [Prueba 25] Hacer una búsqueda escribiendo en el campo un texto en minúscula o
@@ -518,16 +523,16 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Añadir dos ofertas de prueba
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "10");
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "10");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
         // Buscar una oferta
         PO_NavView.selectDropdownById(driver, "gestionOfertasMenu", "gestionOfertasDropdown", "listOffers");
-        PO_OfferView.searchOfferFromAllOfferList(driver, "OFERTA");
+        PO_ShopView.searchOfferFromAllOfferList(driver, "OFERTA");
         // Comprobar que aparecen ofertas
-        PO_OfferView.checkOfferListingContainsOffers(driver, 2);
+        PO_ShopView.checkOfferListingContainsOffers(driver, 2);
     }
 
     // [Prueba 26] Sobre una búsqueda determinada (a elección de desarrollador),
@@ -539,19 +544,19 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Añadir dos ofertas de prueba
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "10");
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "10");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
         // Iniciar sesión con otro usuario, será quien compre una oferta
-        PO_HomeView.clickOption(driver, "logout", "class", "btn btn-primary");
-        PO_LoginView.fillForm(driver, "user02@email.com", "user02");
+        PO_NavView.clickLogout(driver);
+        PO_LoginView.fillLoginForm(driver, "user02@email.com", "user02");
         PO_NavView.selectDropdownById(driver, "gestionOfertasMenu", "gestionOfertasDropdown", "listOffers");
         // Buscar una oferta y comprarla
-        PO_OfferView.searchOfferFromAllOfferList(driver, "1");
-        PO_OfferView.buyOfferFromAllAvailableOfferList(driver, 1);
-        PO_OfferView.checkWallet(driver, "Wallet: 90");
+        PO_ShopView.searchOfferFromAllOfferList(driver, "1");
+        PO_ShopView.buyOfferFromAllAvailableOfferList(driver, 1);
+        PO_NavView.checkWallet(driver, "Wallet: 90");
     }
 
     // [Prueba 27] Sobre una búsqueda determinada (a elección de desarrollador),
@@ -563,19 +568,19 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Añadir dos ofertas de prueba
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "100");
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "100");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
         // Iniciar sesión con otro usuario, será quien compre una oferta
-        PO_HomeView.clickOption(driver, "logout", "class", "btn btn-primary");
-        PO_LoginView.fillForm(driver, "user02@email.com", "user02");
+        PO_NavView.clickLogout(driver);
+        PO_LoginView.fillLoginForm(driver, "user02@email.com", "user02");
         PO_NavView.selectDropdownById(driver, "gestionOfertasMenu", "gestionOfertasDropdown", "listOffers");
         // Buscar una oferta y comprarla
-        PO_OfferView.searchOfferFromAllOfferList(driver, "1");
-        PO_OfferView.buyOfferFromAllAvailableOfferList(driver, 1);
-        PO_OfferView.checkWallet(driver, "Wallet: 0");
+        PO_ShopView.searchOfferFromAllOfferList(driver, "1");
+        PO_ShopView.buyOfferFromAllAvailableOfferList(driver, 1);
+        PO_NavView.checkWallet(driver, "Wallet: 0");
     }
 
     // [Prueba 28] Sobre una búsqueda determinada (a elección de desarrollador),
@@ -587,18 +592,18 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Añadir dos ofertas de prueba
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1000000000");
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1000000000");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "3");
         // Iniciar sesión con otro usuario
-        PO_HomeView.clickOption(driver, "logout", "class", "btn btn-primary");
-        PO_LoginView.fillForm(driver, "user02@email.com", "user02");
+        PO_NavView.clickLogout(driver);
+        PO_LoginView.fillLoginForm(driver, "user02@email.com", "user02");
         PO_NavView.selectDropdownById(driver, "gestionOfertasMenu", "gestionOfertasDropdown", "listOffers");
-        PO_OfferView.searchOfferFromAllOfferList(driver, "1");
+        PO_ShopView.searchOfferFromAllOfferList(driver, "1");
         // Intentar comprar una oferta
-        PO_OfferView.tryToBuyOfferFromAllAvailableOfferList(driver, 1);
+        PO_ShopView.tryToBuyOfferFromAllAvailableOfferList(driver, 1);
     }
 
     // [Prueba 29] Ir a la opción de ofertas compradas del usuario y mostrar la lista.
@@ -609,20 +614,20 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Añadir oferta de prueba
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1");
         // Iniciar sesión con otro usuario
-        PO_HomeView.clickOption(driver, "logout", "class", "btn btn-primary");
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-        PO_LoginView.fillLoginForm(driver, "user10@email.com", "user10");
+        PO_NavView.clickLogout(driver);
+        PO_NavView.clickLogin(driver);
+        PO_LoginView.fillLoginForm(driver, "user13@email.com", "user13");
         PO_NavView.selectDropdownById(driver, "gestionOfertasMenu", "gestionOfertasDropdown", "listOffers");
-        PO_OfferView.buyOfferFromAllAvailableOfferList(driver, 1);
+        PO_ShopView.buyOfferFromAllAvailableOfferList(driver, 1);
         // Accedemos a la vista de listado de ofertas compradas
         PO_NavView.selectDropdownById(driver, "gestionOfertasMenu", "gestionOfertasDropdown", "listPurchases");
         // Comprobar que aparecen ofertas
-        PO_OfferView.checkPurchasesListingContainsOffers(driver, 1);
+        PO_PurchasesView.checkPurchasesListingContainsOffers(driver, 1);
     }
 
     // [Prueba 30] Al crear una oferta, marcar dicha oferta como destacada y
@@ -636,16 +641,16 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
-        PO_OfferView.checkWallet(driver, "Wallet: 100");
+        PO_NavView.checkWallet(driver, "Wallet: 100");
         // Añadir oferta de prueba destacada
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1", true);
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1", true);
         // Comprobar el listado de ofertas destacadas y el wallet
         PO_NavView.selectDropdownById(driver, "gestionOfertasMenu", "gestionOfertasDropdown", "listOffers");
         // 2 ya que aparece la misma oferta en la tabla de destacadas y en la de ofertas
-        PO_OfferView.checkOfferListingContainsOffers(driver, 2);
-        PO_OfferView.checkWallet(driver, "Wallet: 80");
+        PO_ShopView.checkOfferListingContainsOffers(driver, 2);
+        PO_NavView.checkWallet(driver, "Wallet: 80");
     }
 
     // [Prueba 31] Sobre el listado de ofertas de un usuario con más de 20 euros de saldo,
@@ -659,11 +664,11 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
-        PO_OfferView.checkWallet(driver, "Wallet: 100");
+        PO_NavView.checkWallet(driver, "Wallet: 100");
         // Añadir oferta de prueba
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1");
         // Destacar oferta
         PO_NavView.selectDropdownById(driver, "gestionOfertasMenu", "gestionOfertasDropdown", "listMyOffers");
         WebElement element = driver.findElement(By.id("featured"));
@@ -671,8 +676,8 @@ class Sdi2324Entrega2TestApplicationTests {
         // Comprobar el listado de ofertas destacadas y el wallet
         PO_NavView.selectDropdownById(driver, "gestionOfertasMenu", "gestionOfertasDropdown", "listOffers");
         // 2 ya que aparece la misma oferta en la tabla de destacadas y en la de ofertas
-        PO_OfferView.checkOfferListingContainsOffers(driver, 2);
-        PO_OfferView.checkWallet(driver, "Wallet: 80");
+        PO_ShopView.checkOfferListingContainsOffers(driver, 2);
+        PO_NavView.checkWallet(driver, "Wallet: 80");
     }
 
     // [Prueba 32] Sobre el listado de ofertas de un usuario con menos de 20 euros de saldo,
@@ -684,17 +689,17 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Añadir oferta de prueba
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "90");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "90");
         // Iniciar sesión con otro usuario
-        PO_HomeView.clickOption(driver, "logout", "class", "btn btn-primary");
-        PO_LoginView.fillForm(driver, "user04@email.com", "user04");
+        PO_NavView.clickLogout(driver);
+        PO_LoginView.fillLoginForm(driver, "user04@email.com", "user04");
         PO_NavView.selectDropdownById(driver, "gestionOfertasMenu", "gestionOfertasDropdown", "listOffers");
-        PO_OfferView.buyOfferFromAllAvailableOfferList(driver, 1);
+        PO_ShopView.buyOfferFromAllAvailableOfferList(driver, 1);
         // Añadir oferta de prueba
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "20");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "20");
         // Intenta destacar su oferta
         PO_NavView.selectDropdownById(driver, "gestionOfertasMenu", "gestionOfertasDropdown", "listMyOffers");
         WebElement element = driver.findElement(By.id("featured"));
@@ -731,7 +736,7 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Acceder a la vista de listado de logs
         driver.navigate().to("http://localhost:8081/admin");
@@ -749,22 +754,22 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión como usuario administrador
-        PO_LoginView.simulateLogin(driver, "admin@email.com", "admin");
+        PO_LoginView.login(driver, "admin@email.com", "admin");
         // Borrar los logs existentes
         driver.navigate().to("http://localhost:8081/logs/delete/all");
-        PO_HomeView.clickOption(driver, "logout", "class", "btn btn-primary");
+        PO_NavView.clickLogout(driver);
         // Interaccion 1
-        PO_LoginView.simulateLogin(driver, "user01@email.com", "USER0001");
-        PO_LoginView.simulateLogin(driver, "user01@email.com", "user01");
+        PO_LoginView.login(driver, "user01@email.com", "USER0001");
+        PO_LoginView.login(driver, "user01@email.com", "user01");
         driver.navigate().to("http://localhost:8081/offers/shop");
-        PO_HomeView.clickOption(driver, "logout", "class", "btn btn-primary");
+        PO_NavView.clickLogout(driver);
         // Interaccion 2
-        PO_LoginView.simulateLogin(driver, "user02@email.com", "USER0002");
-        PO_LoginView.simulateLogin(driver, "user02@email.com", "user02");
+        PO_LoginView.login(driver, "user02@email.com", "USER0002");
+        PO_LoginView.login(driver, "user02@email.com", "user02");
         driver.navigate().to("http://localhost:8081/offers/shop");
-        PO_HomeView.clickOption(driver, "logout", "class", "btn btn-primary");
+        PO_NavView.clickLogout(driver);
         // Iniciar sesión como usuario administrador
-        PO_LoginView.simulateLogin(driver, "admin@email.com", "admin");
+        PO_LoginView.login(driver, "admin@email.com", "admin");
         // Acceder a la vista de listado de logs
         driver.navigate().to("http://localhost:8081/admin");
         // Comprobar que se muestran los logs
@@ -780,7 +785,7 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión como usuario administrador
-        PO_LoginView.simulateLogin(driver, "admin@email.com", "admin");
+        PO_LoginView.login(driver, "admin@email.com", "admin");
         // Borrar los logs existentes
         driver.navigate().to("http://localhost:8081/logs/delete/all");
         PO_View.checkErrorMessageIsShown(driver, "No hay logs registrados");
@@ -836,10 +841,10 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Añadir 3 ofertas con user01
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1");
         // Acceder con cliente ajax, al listado de ofertas y comprobar que se muestran 3 ofertas
         // (las de user01) y no se muestra la oferta de user02
         // Acceder a la página de login
@@ -862,10 +867,10 @@ class Sdi2324Entrega2TestApplicationTests {
     @Order(42)
     public void PR42() {
         DatabaseUtils.resetOffersCollection();
-
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        DatabaseUtils.seedUsers();
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1");
 
         // Acceder a la página de login
         driver.navigate().to("http://localhost:8081/apiclient/client.html?w=login");
@@ -931,11 +936,11 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
 
         // Añadir 3 ofertas con user01
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1");
 
         // Acceder con cliente ajax, al listado de ofertas y comprobar que se muestran 3 ofertas
         // (las de user01) y no se muestra la oferta de user02
@@ -989,10 +994,10 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetConversationsCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Añadir 3 ofertas con user01
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1");
 
         // Acceder con cliente ajax, al listado de ofertas y comprobar que se muestran 3 ofertas
         // (las de user01) y no se muestra la oferta de user02
@@ -1113,19 +1118,19 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetOffersCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         // Añadir 3 ofertas con user01
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1");
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "2");
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 3", "Descripcion de la oferta de prueba 3", "3");
-        PO_HomeView.clickOption(driver, "logout", "class", "btn btn-primary");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "2");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 3", "Descripcion de la oferta de prueba 3", "3");
+        PO_NavView.clickLogout(driver);
 
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user02@email.com", "user02");
         // Añadir 1 oferta con user02
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 4",
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 4",
                 "Descripcion de la oferta de prueba 4", "4");
 
         // Acceder con cliente ajax, al listado de ofertas y comprobar que se muestran 3 ofertas
@@ -1162,17 +1167,16 @@ class Sdi2324Entrega2TestApplicationTests {
         DatabaseUtils.resetConversationsCollection();
         DatabaseUtils.seedUsers();
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user01@email.com", "user01");
         //Añado una oferta a user01
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1");
-
-        DatabaseUtils.seedUsers();
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 1", "Descripcion de la oferta de prueba 1", "1");
+        PO_NavView.clickLogout(driver);
         // Iniciar sesión con datos validos del usuario estandar
-        PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
+        PO_NavView.clickLogin(driver);
         PO_LoginView.fillLoginForm(driver, "user02@email.com", "user02");
         //Añado una oferta user02
-        PO_OfferView.simulateAddNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "2");
+        PO_MyOffersView.addNewOffer(driver, "Oferta de prueba 2", "Descripcion de la oferta de prueba 2", "2");
 
 
         // Acceder a la página de login
@@ -1289,8 +1293,6 @@ class Sdi2324Entrega2TestApplicationTests {
         List<WebElement> rows = table.findElements(By.tagName("tr"));
         int numRowsAct = rows.size();
 
-        //Compruebo que el actual sea uno mayor q el inicio
-
         //Hay una conversacion abierta
         Assertions.assertEquals(1, numRowsAct);
     }
@@ -1319,7 +1321,7 @@ class Sdi2324Entrega2TestApplicationTests {
         List<WebElement> rowsprev = tableprev.findElements(By.tagName("tr"));
         int numRowsPrev = rowsprev.size();
 
-        //clcko en eliminar
+        //click en eliminar
         driver.findElement(By.id("delet0")).click();
         driver.findElement(By.id("offers")).click();
         driver.findElement(By.id("convers")).click();

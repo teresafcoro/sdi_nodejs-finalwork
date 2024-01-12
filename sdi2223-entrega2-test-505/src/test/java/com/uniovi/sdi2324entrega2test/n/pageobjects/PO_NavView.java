@@ -2,6 +2,7 @@ package com.uniovi.sdi2324entrega2test.n.pageobjects;
 
 import com.uniovi.sdi2324entrega2test.n.util.SeleniumUtils;
 import org.junit.jupiter.api.Assertions;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -10,7 +11,8 @@ import java.util.List;
 public class PO_NavView extends PO_View {
 
     /**
-     * Clic en una de las opciones principales (a href) y comprueba que se vaya a la vista con el elemento de
+     * Clic en una de las opciones principales (a href) y
+     * comprueba que se vaya a la vista con el elemento de
      * tipo type con el texto Destino
      *
      * @param driver:     apuntando al navegador abierto actualmente.
@@ -38,25 +40,13 @@ public class PO_NavView extends PO_View {
     }
 
     /**
-     * Selecciona el enlace de idioma correspondiente al texto textLanguage
+     * Selecciona un elemento de menú, dropdown menu, por su identificador
      *
-     * @param driver:       apuntando al navegador abierto actualmente.
-     * @param textLanguage: el texto que aparece en el enlace de idioma ("English" o "Spanish")
+     * @param driver              WebDriver
+     * @param downdownMenuArrowId String
+     * @param downdownMenuId      String
+     * @param drowndownSubmenuId  String
      */
-
-    public static void changeLanguage(WebDriver driver, String textLanguage) {
-        //clickamos la opción Idioma.
-        List<WebElement> languageButton = SeleniumUtils.waitLoadElementsBy(driver, "id", "btnLanguage",
-                getTimeout());
-        languageButton.get(0).click();
-        //Esperamos a que aparezca el menú de opciones.
-        SeleniumUtils.waitLoadElementsBy(driver, "id", "languageDropdownMenuButton", getTimeout());
-        //CLickamos la opción Inglés partiendo de la opción Español
-        List<WebElement> Selectedlanguage = SeleniumUtils.waitLoadElementsBy(driver, "id", textLanguage,
-                getTimeout());
-        Selectedlanguage.get(0).click();
-    }
-
     public static void selectDropdownById(WebDriver driver, String downdownMenuArrowId,
                                           String downdownMenuId, String drowndownSubmenuId) {
         // Hacer click en el dropdown
@@ -77,11 +67,41 @@ public class PO_NavView extends PO_View {
     }
 
     /**
-     * Pulsa el boton de salir de sesión.
+     * Pulsa el boton de registro de un nuevo usuario
      *
-     * @param driver
+     * @param driver WebDriver
+     */
+    public static void clickSignup(WebDriver driver) {
+        clickOption(driver, "signup", "class", "btn btn-primary");
+    }
+
+    /**
+     * Pulsa el boton de iniciar sesión
+     *
+     * @param driver WebDriver
+     */
+    public static void clickLogin(WebDriver driver) {
+        clickOption(driver, "login", "class", "btn btn-primary");
+    }
+
+    /**
+     * Pulsa el boton de salir de sesión
+     *
+     * @param driver WebDriver
      */
     public static void clickLogout(WebDriver driver) {
         clickOption(driver, "logout", "class", "btn btn-primary");
     }
+
+    /**
+     * Comprueba el valor del wallet (cartera del usuario)
+     *
+     * @param driver     WebDriver
+     * @param walletMssg String
+     */
+    public static void checkWallet(WebDriver driver, String walletMssg) {
+        String element = driver.findElement(By.id("wallet")).getText();
+        Assertions.assertEquals(element, walletMssg);
+    }
+
 }

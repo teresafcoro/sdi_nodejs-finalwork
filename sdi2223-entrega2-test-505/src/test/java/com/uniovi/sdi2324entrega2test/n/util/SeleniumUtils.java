@@ -140,13 +140,13 @@ public class SeleniumUtils {
      */
     static public void logInIntoAccount(WebDriver driver, String role, String email) {
         PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-        PO_LoginView.fillForm(driver, role.equals("STANDARD") ? email : "admin@email.com",
+        PO_LoginView.fillLoginForm(driver, role.equals("STANDARD") ? email : "admin@email.com",
                 role.equals("STANDARD") ? "123456" : "admin");
     }
 
     static public void logInIntoAccount(WebDriver driver, String role, String email, String password) {
         PO_HomeView.clickOption(driver, "login", "class", "btn btn-primary");
-        PO_LoginView.fillForm(driver, role.equals("STANDARD") ? email : "admin@email.com", password);
+        PO_LoginView.fillLoginForm(driver, role.equals("STANDARD") ? email : "admin@email.com", password);
     }
 
     /**
