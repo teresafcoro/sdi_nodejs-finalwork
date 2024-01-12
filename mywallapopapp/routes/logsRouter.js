@@ -30,6 +30,10 @@ module.exports = function (app, logsRepository) {
      */
     app.get("/logs/filter", async function (req, res) {
         const {logType} = req.query;
+        if (logType === 'TODO') {
+            res.redirect("/admin");
+            return;
+        }
         try {
             const logs = await logsRepository.filterLogByType(logType);
             res.render("admin", {logs, sessionUser: req.session.user});

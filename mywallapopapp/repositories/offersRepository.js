@@ -5,7 +5,7 @@ module.exports = {
     }, insertOffer: async function (offer) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("myWallapop");
+            const database = client.db("sdi-2324-entrega2-505");
             const collectionName = 'offers';
             const offersCollection = database.collection(collectionName);
             return await offersCollection.insertOne(offer);
@@ -16,7 +16,7 @@ module.exports = {
         try {
             const limit = 4;
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("myWallapop");
+            const database = client.db("sdi-2324-entrega2-505");
             const collectionName = 'offers';
             const offersCollection = database.collection(collectionName);
             const offersCollectionCount = await offersCollection.count();
@@ -29,7 +29,7 @@ module.exports = {
     }, deleteOffer: async function (filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("myWallapop");
+            const database = client.db("sdi-2324-entrega2-505");
             const collectionName = 'offers';
             const offersCollection = database.collection(collectionName);
             return await offersCollection.deleteOne(filter, options);
@@ -39,7 +39,7 @@ module.exports = {
     }, getOffer: async function (filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("myWallapop");
+            const database = client.db("sdi-2324-entrega2-505");
             const collectionName = 'offers';
             const offersCollection = database.collection(collectionName);
             return await offersCollection.findOne(filter, options);
@@ -49,7 +49,7 @@ module.exports = {
     }, getOffers: async function (filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("myWallapop");
+            const database = client.db("sdi-2324-entrega2-505");
             const collectionName = 'offers';
             const offersCollection = database.collection(collectionName);
             return await offersCollection.find(filter, options).toArray();
@@ -60,7 +60,7 @@ module.exports = {
         try {
             const limit = 5;
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("myWallapop");
+            const database = client.db("sdi-2324-entrega2-505");
             const collectionName = 'offers';
             const offersCollection = database.collection(collectionName);
             const offersCollectionCount = await offersCollection.count();
@@ -75,7 +75,7 @@ module.exports = {
             if (err) {
                 callbackFunction(null)
             } else {
-                const database = dbClient.db("myWallapop");
+                const database = dbClient.db("sdi-2324-entrega2-505");
                 const collectionName = 'purchases';
                 const purchasesCollection = database.collection(collectionName);
                 purchasesCollection.insertOne(shop)
@@ -88,7 +88,7 @@ module.exports = {
         try {
             const limit = 4;
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("myWallapop");
+            const database = client.db("sdi-2324-entrega2-505");
             const collectionName = 'purchases';
             const purchasesCollection = database.collection(collectionName);
             const purchasesCollectionCount = await purchasesCollection.count();
@@ -101,7 +101,7 @@ module.exports = {
     }, updateOffer: async function (offer, filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-            const database = client.db("myWallapop");
+            const database = client.db("sdi-2324-entrega2-505");
             const collectionName = 'offers';
             const offersCollection = database.collection(collectionName);
             return await offersCollection.updateOne(filter, {$set: offer}, options);

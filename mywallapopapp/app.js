@@ -53,6 +53,13 @@ app.use("/offers/myOffers", userSessionRouter);
 app.use("/offers/buy", userSessionRouter);
 app.use("/offers/purchases", userSessionRouter);
 
+// Admin Session Router
+const adminSessionRouter = require('./routes/adminSessionRouter');
+app.use("/admin", adminSessionRouter);
+app.use("/logs/delete/all", adminSessionRouter);
+app.use("/users/delete", adminSessionRouter);
+app.use("/users/list", adminSessionRouter);
+
 // User Seller Router
 const userSellerRouter = require('./routes/userSellerRouter');
 app.use("/offers/delete", userSellerRouter);
@@ -61,6 +68,8 @@ app.use("/offers/featured", userSellerRouter);
 // User Token Router
 const userTokenRouter = require('./routes/userTokenRouter');
 app.use("/api/v1.0/offers", userTokenRouter);
+app.use("/api/v1.0/messages", userTokenRouter);
+app.use("/api/v1.0/conversations", userTokenRouter);
 
 // Rutas
 

@@ -6,14 +6,14 @@ module.exports = {
         this.app = app;
     }, addNewLog: async function (log) {
         const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-        const database = client.db("myWallapop");
+        const database = client.db("sdi-2324-entrega2-505");
         const loggingCollection = database.collection('logs');
         await loggingCollection.insertOne(log).then(() => {
             client.close();
         });
     }, filterLogByType: async function (type) {
         const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-        const database = client.db("myWallapop");
+        const database = client.db("sdi-2324-entrega2-505");
         const loggingCollection = database.collection('logs');
         const filteredLogs = await loggingCollection
             .find({type: type})
@@ -22,7 +22,7 @@ module.exports = {
         return filteredLogs;
     }, findAllLogs: async function () {
         const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-        const database = client.db("myWallapop");
+        const database = client.db("sdi-2324-entrega2-505");
         const loggingCollection = database.collection('logs');
         const allRegisteredLogs = await loggingCollection
             .find({})
@@ -31,7 +31,7 @@ module.exports = {
         return allRegisteredLogs;
     }, deleteAllLogs: async function (callback) {
         const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
-        const database = client.db("myWallapop");
+        const database = client.db("sdi-2324-entrega2-505");
         const loggingCollection = database.collection('logs');
         await loggingCollection.deleteMany({}).then((result) => {
             callback(result.deletedCount === 1);
